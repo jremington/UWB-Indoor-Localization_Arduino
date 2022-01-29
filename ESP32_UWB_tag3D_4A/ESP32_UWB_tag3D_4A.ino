@@ -1,5 +1,5 @@
 // currently tag is module labeled #5
-// This code calculates the (X,Y,Z) position in meteres of a UWB tag, based on the known locations
+// This code calculates the (X,Y,Z) position in meters of a UWB tag, based on the known locations
 // of four UWB anchors, labeled 1 to 4
 
 #include <SPI.h>
