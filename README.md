@@ -17,8 +17,7 @@ https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 Notes:  
 
-1. Each anchors must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor
-so that a known distance is accurately reported. Antenna delays should be on the order of 16550 to 16650 (in units of 15 picoseconds).
+1. Each anchors must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor so that a known distance is accurately reported. Antenna delays should be on the order of 16550 to 16650 (in units of 15 picoseconds).
 For general information on the DW1000 module and antenna delay calibration, see these materials:
 DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000_user_manual_2.11.pdf
 DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_Antennna-Delay-Calibration_V1.2.pdf
@@ -26,9 +25,9 @@ DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_A
 I chose a uniquely identified tag as the common factor, with its anchor delay set at the Arduino DW1000 library default=16384 (which is too small) and 
 calibrate each individual anchor at a distance of 7.19 meters. 
 
-Sample plot for one calibrate anchor/tag pair shows that 10 cm accuracy is achieved over a range of 1 to 8 m.
+Sample plot for calibration of one anchor/tag pair shows that 10 cm accuracy is achieved over a range of 1 to 8 m.
 
-![Anchor_2_calibration](https://user-images.githubusercontent.com/5509037/151675302-e3b7cb8b-c085-4a13-8b75-51dbb3f79a17.PNG)
+![Anchor_2_calibration](https://user-images.githubusercontent.com/5509037/151675622-8fdc3bac-088d-49b5-a4bf-96fc753d4aa2.PNG)
 
 2. All anchors must be uniquely identifed using the lowest bits of the assigned device addresses and their 2D or 3D locations must be accurately measured.
 The measurement origin is arbitrary, but that choice will become the origin of the subsequent tag coordinates.  Measurement units are arbitrary, 
