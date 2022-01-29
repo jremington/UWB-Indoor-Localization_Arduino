@@ -1,7 +1,7 @@
 # UWB-Indoor-Localization
 Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
-Example Arduino code using ESP32_UWB modules to estimate the 2D or 3D position of a tag, in the presence of 3, 4 or more anchors at known locations.
+Example Arduino code using ESP32_UWB modules to estimate the 2D or 3D position of a tag, in the presence of 3, 4 or more anchors at known locations. With careful anchor calibration and anchor position measurements, +/- 10 cm accuracy in tag position can be obtained.
 
 The code makes extensive use of the Arduino DW1000 libary by thotro (https://github.com/thotro/arduino-dw1000), source code copied here for convenience with
 minor changes to eliminate compilation errors using the ESP32_Arduino IDE.
