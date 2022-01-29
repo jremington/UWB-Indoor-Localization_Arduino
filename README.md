@@ -40,3 +40,8 @@ include those values. This introduces some error into the position calculation i
 
 In the 3D example, Z coordinates tend to be poorly determined if the tags are not widely spaced in Z. That means having at least one tag on the floor and 
 at least one at a height of several meters above the floor.
+
+5. Currently, localization examples are hard wired to recognize a certain number and configuration of anchors. It is straightforward to generalize the method
+to work with a variable number of anchors and to choose the appropriate method for location determination. I'll add to this as the project progresses and welcome input from others.
+
+7. There is a lot to be done to improve accuracy, robustness, and flexibility of anchor selection. Hopefully this will get other contributors started.
