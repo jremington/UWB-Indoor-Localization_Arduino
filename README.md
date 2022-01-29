@@ -17,7 +17,7 @@ https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 Notes:  
 
-1. Each anchors must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor so that a known distance is accurately reported. Antenna delays should be on the order of 16550 to 16650 (in units of 15 picoseconds).
+1. Each anchor must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor so that a known distance is accurately reported. Antenna delays should be on the order of 16550 to 16650 (in units of 15 picoseconds).
 For general information on the DW1000 module and antenna delay calibration, see these materials:
 DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000_user_manual_2.11.pdf
 DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_Antennna-Delay-Calibration_V1.2.pdf
