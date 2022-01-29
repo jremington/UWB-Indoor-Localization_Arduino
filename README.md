@@ -6,7 +6,7 @@ Example Arduino code using ESP32_UWB modules to estimate the 2D or 3D position o
 The code makes extensive use of the Arduino DW1000 libary by thotro (https://github.com/thotro/arduino-dw1000), source code copied here for convenience with
 minor changes to eliminate compilation errors using the ESP32_Arduino IDE.
 
-The code collects distances to anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations.
+The code collects distances from the tag to all anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations.
 For the method, see this short technical paper: https://www.th-luebeck.de/fileadmin/media_cosa/Dateien/Veroeffentlichungen/Sammlung/TR-2-2015-least-sqaures-with-ToA.pdf
 
 An advantage of this particular approach is that the normal "A" matrix depends only on the anchor configuration, and thus matrix inversion needs to happen only once.
