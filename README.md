@@ -36,8 +36,7 @@ but the examples assume meters. See the anchor code for examples of addressing s
 
 3. The tag must know the indices and positions of the anchors. See the tag code for examples.
 
-4. Z coordinates:  in the 2D examples, the anchor Z coordinates are ignored, but the anchors and tag DO have Z coordinates, and the reported distances will
-include those values. This introduces some error into the position calculation if the anchors are not located in the same Z plane as the tag. In the 3D example, Z coordinates tend to be poorly determined if the tags are not widely spaced in Z. That means having at least one tag on the floor and 
+4. Anchor Placement: Anchors may be arbitrarily placed, but should be well distributed over the covered area. The corners of a large room are convenient. Coordinates must be carefully measured on a square grid. The measurement origin and units are arbitrary (feet, meters, etc.) and the tag coordinates will be reported in the same units, relative to the same origin. Note on Z coordinates:  In the 2D examples, the anchor Z coordinates are ignored, but the anchors and tag DO have Z coordinates, and the reported distances will include those values. This introduces some error into the position calculation if the anchors are not located in the same Z plane as the tag. In the 3D example, Z coordinates tend to be poorly determined if the tags are not widely spaced in Z. That means having at least one tag on the floor and 
 at least one at a height of several meters above the floor.
 
 5. Currently, localization examples are hard wired to recognize a certain number and configuration of anchors. It is straightforward to generalize the method
