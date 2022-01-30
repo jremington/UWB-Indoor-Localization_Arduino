@@ -11,7 +11,7 @@ For the method, see this short technical paper: https://www.th-luebeck.de/filead
 
 An advantage of this particular approach is that the normal "A" matrix depends only on the anchor configuration, and thus matrix inversion needs to happen only once.
 
-HARDWARE: four, five or more ESP32_UWB modules from makerfabs:
+## HARDWARE REQUIRED: four (2D), five (3D) or more ESP32_UWB modules from makerfabs:
 https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 
