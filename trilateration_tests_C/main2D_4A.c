@@ -61,7 +61,7 @@ int main()
     for (i=0; i<2; i++) {
       for(j=0; j<2; j++) {
         ATA[i][j]=0.0;
-        for(k=0; k<N_ANCHORS; k++) ATA[i][j] += A[k][i]*A[k][j];
+        for(k=0; k<N_ANCHORS-1; k++) ATA[i][j] += A[k][i]*A[k][j];
       }
     }
     printf("ATA %5.2f %5.2f\n    %5.2f %5.2f\n",ATA[0][0],ATA[0][1],ATA[1][0],ATA[1][1]);
