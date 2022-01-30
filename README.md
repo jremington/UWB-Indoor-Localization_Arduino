@@ -11,13 +11,13 @@ For the method, see this short technical paper: https://www.th-luebeck.de/filead
 
 An advantage of this particular approach is that the normal "A" matrix depends only on the anchor configuration, and thus matrix inversion needs to happen only once.
 
-## HARDWARE REQUIRED: four (2D), five (3D) or more ESP32_UWB modules from makerfabs:
+### HARDWARE REQUIRED: four (2D), five (3D) or more ESP32_UWB modules from makerfabs:
 https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 
 Notes:  
 
-1. Each anchor must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor. in order that a known distance is accurately reported. Only one module of a pair need be calibrated. If one module has the library default antenna delay of 16384, in my experience the antenna delay of other module will be in the range of 16550 to 16650 (units are 15 picoseconds).
+1. Each anchor must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor, in order that a known distance is accurately reported. Only one module of any pair need be calibrated. If one module has the library default antenna delay of 16384, in my experience the antenna delay of other module will be in the range of 16550 to 16650 (units are 15 picoseconds).
 For general information on the DW1000 module and antenna delay calibration, see these materials:
 
 DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000_user_manual_2.11.pdf
