@@ -77,7 +77,8 @@ void newRange()
   if (index > 0) {
     last_anchor_update[index - 1] = millis();  //decrement for array index
     float range = DW1000Ranging.getDistantDevice()->getRange();
-    if (range >= 0.0 && range < 30.0) last_anchor_distance[index - 1] = range; //sanity checks
+    last_anchor_distance[index-1] = range;
+    if (range < 0.0 || range > 30.0)     last_anchor_update[index - 1] = 0;  //sanity check, ignore this measurement
   }
   
   int detected = 0;
