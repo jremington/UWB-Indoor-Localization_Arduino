@@ -3,7 +3,7 @@
 
 Example Arduino code using ESP32_UWB modules to estimate the 2D or 3D position of a tag, in the presence of 3, 4 or more anchors at known locations. With careful anchor calibration and anchor position determination, +/- 10 cm accuracy in tag position can be obtained.
 
-The code makes extensive use of the Arduino DW1000 libary by thotro (https://github.com/thotro/arduino-dw1000), source code copied here for convenience, with
+The code makes extensive use of the Arduino DW1000 libary by Thomas Trojer (https://github.com/thotro/arduino-dw1000), source code copied here for convenience, with
 minor changes required to eliminate compilation errors using the ESP32_Arduino IDE.
 
 The code collects distances from the tag to all anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations.
