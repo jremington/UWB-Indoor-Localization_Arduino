@@ -41,6 +41,8 @@ but the examples assume meters. See the anchor code for examples of addressing s
 5. **Note on Z coordinates**:  In the 2D examples, the anchor Z coordinates are ignored, but the anchors and tag DO have Z coordinates, and the reported distances will include those values. This introduces some error into the position calculation if the anchors are not located in the same Z plane as the tag. In the 3D example, Z coordinates tend to be poorly determined if the tags are not widely spaced in Z. That means having at least one tag on the floor and 
 at least one at a height of several meters above the floor.
 
+6. The tag determines its position from the anchor distances by a linear least square algorithm. A very crude estimate of the error is also output, which is simply the root mean square of the difference between the calculated distances and the reported distances. I have not made an effort to determine if there is a useful relationship between this value and the actual position error. 
+
 6. Currently, localization examples are hard wired to recognize a certain number and configuration of anchors. It is straightforward to generalize the method
 to work with a variable number of anchors and to choose the appropriate method for location determination. I'll add to this as the project progresses and welcome input from others.
 
