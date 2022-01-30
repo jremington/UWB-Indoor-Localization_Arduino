@@ -34,7 +34,7 @@ The plot below shows the result for calibration of one anchor/tag pair and demon
 The measurement origin is arbitrary, but that choice will become the origin of the subsequent tag coordinates.  Measurement units are arbitrary (feet, meters, etc.), 
 but the examples assume meters. See the anchor code for examples of addressing schemes.
 
-3. In order to compute its position, the tag must know the indices and positions of the anchors. See the tag code for examples.
+3. In order to compute its position, the tag must recognize the broadcast anchor IDs and know the positions of the anchors. See the tag code for examples.
 
 4. Anchor Placement: Anchors may be arbitrarily placed, but should be well distributed over the covered area. The corners of a large room are convenient. Coordinates must be carefully measured on a square grid. The tag coordinates will be reported in the same measurement units as the anchor coordinates, relative to the same origin. 
  
