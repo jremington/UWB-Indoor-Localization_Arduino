@@ -1,4 +1,7 @@
 // currently tag is module #5
+// The purpose of this code is to set the tag address and antenna delay to default.
+// this tag will be used for calibrating the anchors.
+
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
@@ -19,7 +22,7 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
 
   //init the configuration
