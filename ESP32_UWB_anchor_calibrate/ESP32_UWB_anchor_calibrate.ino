@@ -12,7 +12,9 @@
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
-// unique anchor andress. First two bytes become "short address", last two bits of first byte = anchor ID
+
+// unique anchor andress. First two bytes become "short address", 
+// The last three bits of first byte = anchor ID in 2D and 3D localization code.
 
 char anchor_addr[]= "82:00:5B:D5:A9:9A:E2:9C";  //#2
 
