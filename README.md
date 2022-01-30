@@ -44,3 +44,5 @@ at least one at a height of several meters above the floor.
 to work with a variable number of anchors and to choose the appropriate method for location determination. I'll add to this as the project progresses and welcome input from others.
 
 7. There is a lot to be done to improve accuracy, robustness, and flexibility of anchor selection. Hopefully this will get other contributors started.
+
+8. For experimentation with the trilateration algorithm, I've uploaded simple C test code, for use with the Code::Blocks IDE. It allows studies of sensitivity to noise in the measurements, the effect of anchor placement, etc.
