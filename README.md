@@ -15,7 +15,7 @@ An advantage of this particular approach is that the normal "A" matrix depends o
 https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 
-Notes:  
+## Setup and Installation Notes:  
 
 1. Each anchor must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor, in order that a known distance is accurately reported. Only one module of any pair need be calibrated. If one module has the library default antenna delay of 16384, in my experience the antenna delay of other module will be in the range of 16550 to 16650 (units are 15 picoseconds).
 For general information on the DW1000 module and antenna delay calibration, see these materials:
