@@ -1,6 +1,7 @@
 // currently tag is module labeled #5
 // This code calculates the (X,Y,Z) position in meters of a UWB tag, based on the known locations
 // of four UWB anchors, labeled 1 to 4
+// S. James Remington 1/2022
 
 #include <SPI.h>
 #include "DW1000Ranging.h"
