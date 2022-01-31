@@ -17,6 +17,7 @@ for j = 1:10
 %% determine distances
 for i = 1:length(anchor_matrix)
 vec = anchor_matrix(i,:) - r;
+% add some noise for tests. Here, 0.1 m rms distance error
 d(i) = sqrt(sum(vec.^2)) + random('Normal',0,0.1);
 end
 disp(d);
@@ -36,6 +37,7 @@ disp(r0)
 
 // C translation
 // coordinates of at least four anchors. It is straightforward to generalize this method to five or more.
+// S. James Remington 1/2022
 
 float anchor_matrix[4][3]=
 {
