@@ -30,7 +30,7 @@ void setup()
   DW1000Ranging.initCommunication(PIN_RST, PIN_SS, PIN_IRQ); //Reset, CS, IRQ pin
 
   DW1000Ranging.attachNewRange(newRange);
-  DW1000Ranging.attachBlinkDevice(newBlink);
+  DW1000Ranging.attachNewDevice(newDevice);
   DW1000Ranging.attachInactiveDevice(inactiveDevice);
 
 // start as tag, do not assign random short address
@@ -50,10 +50,9 @@ void newRange()
   Serial.println(DW1000Ranging.getDistantDevice()->getRange());
 }
 
-void newBlink(DW1000Device *device)
+void newDevice(DW1000Device *device)
 {
-  Serial.print("blink; 1 device added ! -> ");
-  Serial.print(" short:");
+  Serial.print("Device added: ");
   Serial.println(device->getShortAddress(), HEX);
 }
 
