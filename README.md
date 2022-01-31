@@ -47,3 +47,10 @@ to work with a variable number of anchors and to choose the appropriate method f
 7. There is a lot to be done to improve accuracy, robustness, and flexibility of anchor selection. Hopefully this will get other contributors started.
 
 8. For experimentation with the trilateration algorithm, I've uploaded simple C test code. I use it with the Code::Blocks IDE. It allows studies of sensitivity to noise in the measurements, the effect of anchor placement, etc.
+
+
+## Ideas for future development
+
+1. Fix the DW10000 library. Range errors are common (e.g. negative distances), setAntennaDelay() doesn't update the device registers, etc.
+2. Have the anchor transmit its coordinates along with a range report.
+3. Add to this list
