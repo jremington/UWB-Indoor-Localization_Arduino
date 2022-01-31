@@ -6,7 +6,7 @@
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
-#include "util/m33v3.h"   //matrix and vector library macros
+#include "util/m33v3.h"   //matrix and vector macro library, all loops unrolled
 
 //#define DEBUG_TRILAT   //debug output in trilateration code
 //#define DEBUG_DISTANCES   //print collected anchor distances for algorithm
