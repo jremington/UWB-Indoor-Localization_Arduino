@@ -26,7 +26,7 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 
 // variables for position determination
 #define N_ANCHORS 4
-#define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
+#define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds) 
 
 // global variables, input and output
 
