@@ -2,6 +2,7 @@
 // this version is 2D (X,Y) only, 3 anchors.
 // The Z coordinates of anchors and tag are all assumed to be zero, so for highest accuracy
 // the anchors should be approximately in the same horizontal plane as the tag.
+// S. James Remington 1/2022
 
 #include <SPI.h>
 #include "DW1000Ranging.h"
