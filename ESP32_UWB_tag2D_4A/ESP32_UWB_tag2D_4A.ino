@@ -29,7 +29,7 @@ char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
 #define N_ANCHORS 4
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds) 
 
-// global variables, input and output
+// global variables, input and output 
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates, relative to chosen origin.
   {0.0, 0.0, 0.97},  //Anchor labeled #1
