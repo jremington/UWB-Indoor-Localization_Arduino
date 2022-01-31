@@ -41,7 +41,7 @@ at least one at a height of several meters above the floor.
 
 6. The tag determines its position from the anchor distances by a linear least squares algorithm. A very crude estimate of the error is also output, which is simply the root mean square difference between the calculated distances and the reported distances. I have not made an effort to determine if there is a useful relationship between this value and the actual position error. It is of course possible to estimate coordinate uncertainties from the least squares normal matrix, but that feature remains to be added to the code.
 
-6. Currently, localization examples are hard wired to recognize a certain number and configuration of anchors. It is straightforward to generalize the method
+6. Currently, localization examples are hard coded to recognize a certain number and configuration of anchors. It is straightforward to generalize the method
 to work with a variable number of anchors and to choose the appropriate method for location determination. I'll add to this as the project progresses and welcome input from others.
 
 7. There is a lot to be done to improve accuracy, robustness, and flexibility of anchor selection. Hopefully this will get other contributors started.
