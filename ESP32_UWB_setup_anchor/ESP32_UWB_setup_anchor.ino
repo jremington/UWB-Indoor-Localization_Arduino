@@ -48,7 +48,7 @@ void setup()
   DW1000.setAntennaDelay(Adelay);
 
   DW1000Ranging.attachNewRange(newRange);
-  DW1000Ranging.attachBlinkDevice(newBlink);
+  DW1000Ranging.attachNewDevice(newDevice);
   DW1000Ranging.attachInactiveDevice(inactiveDevice);
 
   //start the module as an anchor, do not assign random short address
@@ -80,15 +80,14 @@ void newRange()
   Serial.println(dist);
 }
 
-void newBlink(DW1000Device *device)
+void newDevice(DW1000Device *device)
 {
-  Serial.print("blink; 1 device added ! -> ");
-  Serial.print(" short:");
+  Serial.print("Device added: ");
   Serial.println(device->getShortAddress(), HEX);
 }
 
 void inactiveDevice(DW1000Device *device)
 {
-  Serial.print("delete inactive device: ");
+  Serial.print("Delete inactive device: ");
   Serial.println(device->getShortAddress(), HEX);
 }
