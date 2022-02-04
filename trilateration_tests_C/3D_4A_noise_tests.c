@@ -32,43 +32,30 @@ float Gauss (int n) {
 
 int main()
 {
-    int i,j;
+    int i,j,k;  //loop variables
+
+    int nk = 10; //number of solutions to average
     int N_trials = 1000;
     int N_ANCHORS = 4;
     Random = seedRand(1337);
 
     float tmp;
     float d[4] ={0}; //distances from anchors
-    float k[4], x[4], y[4], z[4], v[3]; //temporary vectors
+    float kv[4], x[4], y[4], z[4]; //temporary vectors
     float A[3][3], Ainv[3][3], b[3];  //the system of equations to solve
 
     float dn, dnbar=0.0, dn2=0.0;  //noise parameters
 
     printf("trilat 3D test: %d runs\n", N_trials);
-
-    for (j=1; j<=N_trials; j++) {
-
-// generate positions
-    r[0] = 10.0*genRand(&Random);
-    r[1] = 10.0*genRand(&Random);
-    r[2] =  3.0*genRand(&Random);
-
-    //calculate distances from position to anchors
-
-    for(i=0; i<4; i++) {
-    VEC_DIFF(v,anchor_matrix[i],r);
-    VEC_LENGTH(tmp, v);
-    dn = 0.5*Gauss(7);
-    d[i] = tmp + dn; //add noise to calculated distances
-    dnbar += dn;  //for noise statistics
-    dn2 += dn*dn;
-    }
+    printf(" averaging over %d position estimates\n",nk);
+    //calculate Ainv
+    // It depends on anchors configurations, and needs to be determined only once
 
     for (i=0; i<4; i++) {
     x[i] = anchor_matrix[i][0];
     y[i] = anchor_matrix[i][1];
     z[i] = anchor_matrix[i][2];
-    k[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
+    kv[i] = x[i]*x[i] + y[i]*y[i] + z[i]*z[i];
     }
 
 // set up least squares equation
@@ -77,7 +64,6 @@ int main()
     A[i-1][0] = x[i] - x[0];
     A[i-1][1] = y[i] - y[0];
     A[i-1][2] = z[i] - z[0];
-    b[i-1] = d[0]*d[0] - d[i]*d[i] + k[i] - k[0];
     }
 
 // solve:  2 A rc = b
@@ -89,8 +75,43 @@ int main()
     det = 1.0 / (det);
     SCALE_ADJOINT_3X3 (Ainv, det, A);
 
+    for (j=1; j<=N_trials; j++) {
+
+// generate positions
+    r[0] = 10.0*genRand(&Random);
+    r[1] = 10.0*genRand(&Random);
+    r[2] =  3.0*genRand(&Random);
+
+    float ravg[3]={0};
+
+    for(k=0; k<nk; k++) {//average several position estimates
+
+    //calculate distances from position to anchors
+
+    for(i=0; i<4; i++) {
+    VEC_DIFF(x,anchor_matrix[i],r);  //reuse x vector
+    VEC_LENGTH(tmp, x);
+    dn = Gauss(7);  //generate +/- 0.1 rms noise
+    d[i] = tmp + dn; //add noise to calculated distances
+    dnbar += dn;  //for noise statistics
+    dn2 += dn*dn;
+    }
+
+// set up least squares equation
+
+    for (i=1; i<4; i++) {
+    b[i-1] = d[0]*d[0] - d[i]*d[i] + kv[i] - kv[0];
+    }
+// solve for rc[]
+
     MAT_DOT_VEC_3X3(rc,Ainv,b);
-    for (i=0; i<3; i++) rc[i] *= 0.5;  //remove factor of 2
+    for (i=0; i<3; i++) {
+      rc[i] *= 0.5;  //remove factor of 2
+      ravg[i] += rc[i];  //average the position data
+      }
+   } // end for k
+
+    for (i=0; i<3; i++) rc[i]=ravg[i]/nk;
 
 // data for Excel .csv file
     printf("%6.2f, %6.2f, %6.2f, ",r[0],r[1],r[2]);  //input r
@@ -110,8 +131,8 @@ int main()
     printf("%6.2f\n",sqrt(rmse/((float)N_ANCHORS)));
     }  // end for j
 
-    dnbar /= (4*N_trials);  //four distances per test
-    dn2 /= (4*N_trials);
+    dnbar /= (nk*4*N_trials);  //four distances per test
+    dn2 /= (nk*4*N_trials);
     dn = sqrt(dn2 - dnbar*dnbar); //standard deviation of added noise
     printf("noise statistics: mean %6.4f, sd %6.4f\n",dnbar,dn); //noise added to distances (m)
     return 0;
