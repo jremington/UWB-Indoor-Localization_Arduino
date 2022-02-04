@@ -114,13 +114,13 @@ int main()
 
     for (i=0; i<3; i++) {
     rc[i]=rcavg[i]/nk;
-    rcavg2[i] = sqrt(rcavg2[i]/nk - rc[i]*rc[i]);  //sd over cluster average along each axis
+    rcavg2[i] = sqrt(rcavg2[i]/nk - rc[i]*rc[i]);  //axial SDs of cluster average
     }
 
 // data for Excel .csv file
     printf("%6.2f, %6.2f, %6.2f, ",r[0],r[1],r[2]);  //input r
     printf("%6.2f, %6.2f, %6.2f, ",rc[0],rc[1],rc[2]); //calculated and averaged r, given noisy measurements
-    printf("%6.2f, %6.2f, %6.2f, ",rcavg2[0],rcavg2[1],rcavg2[2]); //point cluster axial VARIANCES
+    printf("%6.2f, %6.2f, %6.2f, ",rcavg2[0],rcavg2[1],rcavg2[2]); //point cluster axial SDs
     // the ninth column above shows that the Z values are very poorly determined
 
     VEC_LENGTH(tmp,rcavg2);
