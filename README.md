@@ -52,6 +52,9 @@ to work with a variable number of anchors and to choose the appropriate method f
 
 I've posted C test code that can be used to test the basic localization algorithm. Initial tests with the 3D, 4 anchor case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required, and increasing the number of anchors, so that the problem is overdetermined, will also help.
 
+![error_analysis](https://user-images.githubusercontent.com/5509037/152608604-b8ad3b52-d900-421b-a4cb-7c2bc54b87d2.PNG)
+
+
 ## Ideas for future development
 
 1. Fix the DW10000 library. Range errors are common (e.g. negative distances), setAntennaDelay() doesn't update the device registers, etc.
