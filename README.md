@@ -50,7 +50,9 @@ to work with a variable number of anchors and to choose the appropriate method f
 
 ## Test cases
 
-I've posted C test code that can be used to test the basic localization algorithm. Initial tests with the 3D, 4 anchor case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will also help.
+I've posted C code that can be used to simulate and conduct various tests of the basic localization algorithm. Initial tests with the 3D, 4 anchor case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will also help.
+
+The plot below is from a run in which 1000 random positions were generated within the box defined by the anchors, noisy anchor distances were calculated, and were used to make position estimates, each an average of 10 independent position calculations. Noise from the radio estimates was simulated by adding +/- 10 cm to the calculated distances.  It suggests that to estimate the true coordinate error, multiply the measured distance error by a factor of about 3.
 
 ![error_analysis](https://user-images.githubusercontent.com/5509037/152608604-b8ad3b52-d900-421b-a4cb-7c2bc54b87d2.PNG)
 
