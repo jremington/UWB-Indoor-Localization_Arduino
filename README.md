@@ -48,6 +48,9 @@ to work with a variable number of anchors and to choose the appropriate method f
 
 8. For experimentation with the trilateration algorithm, I've uploaded simple C test code. I use it with the Code::Blocks IDE. It allows studies of sensitivity to noise in the measurements, the effect of anchor placement, etc.
 
+## Test cases
+
+I've posted C test code that can be used to test the basic localization algorithm. Initial tests with the 3D, 4 anchor case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required, and increasing the number of anchors, so that the problem is overdetermined, will also help.
 
 ## Ideas for future development
 
