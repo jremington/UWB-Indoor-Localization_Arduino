@@ -58,7 +58,7 @@ The plot suggests that a reasonable estimate the true coordinate error is obtain
 
 ![error_analysis](https://user-images.githubusercontent.com/5509037/152608604-b8ad3b52-d900-421b-a4cb-7c2bc54b87d2.PNG)
 
-On the other hand, averaging multiple measurements looks to provide a better estimate of the coordinate error. The plot below shows the result of a 1000 point simulation, where each point was obtained as an average of 10 individual position estimates. The standard deviation of the average, divided by 2, is a reasonable estimate of the true coordinate error. The SD is dominated by errors in the Z coordinates.
+On the other hand, averaging multiple measurements looks to provide a better estimate of the coordinate error. The plot below shows the result of a 1000 point simulation, where each point was obtained as an average of 10 individual position estimates, each based on noisy distance data as above. The standard deviation of the average, divided by 2, appears to be a reasonable estimate of the true coordinate error. The SD of the average is dominated by errors in the Z coordinates.
 
 ![position_averaging](https://user-images.githubusercontent.com/5509037/152617681-fb00e5b7-99f0-4a1d-b684-ae8821c010f5.PNG)
 
