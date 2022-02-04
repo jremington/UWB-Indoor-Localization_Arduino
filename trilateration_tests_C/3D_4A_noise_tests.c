@@ -45,6 +45,7 @@ int main()
     float dn, dnbar=0.0, dn2=0.0;  //noise parameters
 
     printf("trilat 3D test: %d runs\n", N_trials);
+
     for (j=1; j<=N_trials; j++) {
 
 // generate positions
@@ -105,12 +106,13 @@ int main()
     VEC_DIFF(x,anchor_matrix[i],rc);
     VEC_LENGTH(dc, x);
     rmse += (d[i]-dc)*(d[i]-dc);
-    }
-    printf("%6.2f, ",sqrt(rmse/((float)N_ANCHORS)));
+     }
+    printf("%6.2f\n",sqrt(rmse/((float)N_ANCHORS)));
+    }  // end for j
+
     dnbar /= (4*N_trials);  //four distances per test
     dn2 /= (4*N_trials);
     dn = sqrt(dn2 - dnbar*dnbar); //standard deviation of added noise
-    printf("%6.4f\n",dn); //noise added to distances (m)
-    }
+    printf("noise statistics: mean %6.4f, sd %6.4f\n",dnbar,dn); //noise added to distances (m)
     return 0;
 }
