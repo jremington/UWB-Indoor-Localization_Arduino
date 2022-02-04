@@ -82,7 +82,7 @@ int main()
     r[1] = 10.0*genRand(&Random);
     r[2] =  3.0*genRand(&Random);
 
-    float ravg[3]={0};
+    float rcavg[3]={0}, rcavg2[3]={0};
 
     for(k=0; k<nk; k++) {//average several position estimates
 
@@ -107,20 +107,31 @@ int main()
     MAT_DOT_VEC_3X3(rc,Ainv,b);
     for (i=0; i<3; i++) {
       rc[i] *= 0.5;  //remove factor of 2
-      ravg[i] += rc[i];  //average the position data
+      rcavg[i] += rc[i];  //average the position data
+      rcavg2[i] += rc[i]*rc[i]; //for stats
       }
    } // end for k
 
-    for (i=0; i<3; i++) rc[i]=ravg[i]/nk;
+    for (i=0; i<3; i++) {
+    rc[i]=rcavg[i]/nk;
+    rcavg2[i] = sqrt(rcavg2[i]/nk - rc[i]*rc[i]);  //sd over cluster average along each axis
+    }
 
 // data for Excel .csv file
     printf("%6.2f, %6.2f, %6.2f, ",r[0],r[1],r[2]);  //input r
-    printf("%6.2f, %6.2f, %6.2f, ",rc[0],rc[1],rc[2]); //calculated r, given noisy measurements
+    printf("%6.2f, %6.2f, %6.2f, ",rc[0],rc[1],rc[2]); //calculated and averaged r, given noisy measurements
+    printf("%6.2f, %6.2f, %6.2f, ",rcavg2[0],rcavg2[1],rcavg2[2]); //point cluster axial VARIANCES
+    // the ninth column above shows that the Z values are very poorly determined
+
+    VEC_LENGTH(tmp,rcavg2);
+    printf("%6.2f, ", tmp);  //SD for calculate rc point cluster
+
+
     VEC_DIFF(x,r,rc);
     VEC_LENGTH(tmp, x);
     printf("%6.2f, ", tmp);  //rms diff r versus rc
 
-// error in distances from calculated position
+// error in distances from calculated position (averaged)
 
     float dc, rmse=0.0;
     for(i=0; i<N_ANCHORS; i++) {
