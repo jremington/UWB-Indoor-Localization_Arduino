@@ -64,6 +64,10 @@ On the other hand, averaging multiple measurements looks to provide a better est
 
 The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement, the 2D (x,y) position error is comparable to the noise in the distance measurements (+/- 10 cm).
 
+EXCEL results here:
+
+[tl2D_1.xlsx](https://github.com/jremington/UWB-Indoor-Localization_Arduino/files/8008994/tl2D_1.xlsx)
+
 ## Ideas for future development
 
 1. Fix the DW10000 library. Range errors are common (e.g. negative distances), setAntennaDelay() doesn't update the device registers, etc.
