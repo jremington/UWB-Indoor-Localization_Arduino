@@ -62,7 +62,7 @@ On the other hand, averaging multiple measurements looks to provide a better est
 
 ![position_averaging](https://user-images.githubusercontent.com/5509037/152617681-fb00e5b7-99f0-4a1d-b684-ae8821c010f5.PNG)
 
-
+The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement, the 2D (x,y) position error is comparable to the noise in the distance measurements (+/- 10 cm).
 
 ## Ideas for future development
 
