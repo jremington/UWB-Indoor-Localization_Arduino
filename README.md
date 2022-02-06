@@ -50,7 +50,11 @@ to work with a variable number of anchors and to choose the appropriate method f
 
 ## Test cases
 
-I've posted C code that can be used to simulate and conduct various tests of the basic localization algorithm. Initial tests with the 3D, 4 anchor case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will also help.
+I've posted C code that can be used to simulate and conduct various tests of the basic localization algorithm in either 2D or 3D.
+
+## 3D tests
+
+Initial tests with the 3D, 4 anchor (not overdetermined) case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will certainly help.
 
 The plot below is from a run in which 1000 random positions were generated within the box defined by the anchors, noisy anchor distances were generated, and were used to make 1000 position estimates, each an average of 10 independent position calculations from 10 different sets of noisy distance data. Noise from the radio module distance estimates was simulated by adding +/- 10 cm (zero mean Gaussian distribution) to the calculated distances.  
 
@@ -61,6 +65,8 @@ The plot suggests that a reasonable estimate the true coordinate error is obtain
 On the other hand, averaging multiple measurements looks to provide a better estimate of the coordinate error. The plot below shows the result of a 1000 point simulation, where each point was obtained as an average of 10 individual position estimates, each based on noisy distance data as above. The standard deviation of the average, divided by 2, appears to be a reasonable estimate of the true coordinate error. The SD of the average is dominated by errors in the Z coordinates.
 
 ![position_averaging](https://user-images.githubusercontent.com/5509037/152617681-fb00e5b7-99f0-4a1d-b684-ae8821c010f5.PNG)
+
+## 2D tests
 
 The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement and 10-fold position averaging, the 2D (x,y) position error is strictly comparable to the assumed noise in the distance measurements (+/- 10 cm).  
 
