@@ -76,4 +76,4 @@ EXCEL results here:
 2. Have the anchor transmit its coordinates along with a range report.
 3. Implement use of bluetooth or WiFi to obtain tag coordinates, update tag and anchor parameters, etc.
 4. Reduce tag/anchor power consumption using sleep modes
-5. 
+5. Your input to this list...
