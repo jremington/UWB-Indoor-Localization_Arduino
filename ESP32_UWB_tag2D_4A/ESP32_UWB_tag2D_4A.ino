@@ -4,6 +4,8 @@
 // the anchors should be approximately in the same horizontal plane as the tag.
 // S. James Remington 1/2022
 
+// This code does not average position measurements!
+
 #include <SPI.h>
 #include "DW1000Ranging.h"
 #include "DW1000.h"
