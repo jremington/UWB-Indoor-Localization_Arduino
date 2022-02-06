@@ -68,13 +68,16 @@ On the other hand, averaging multiple measurements looks to provide a better est
 
 ## 2D tests
 
-The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement and 10-fold position averaging, the 2D (x,y) position error is strictly comparable to the assumed noise in the distance measurements (+/- 10 cm).  
+The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement and 10-fold position averaging, the 2D (x,y) position error is strictly comparable to the assumed noise in the distance measurements (+/- 10 cm). 
+
+Plot for 1000 simulations:  
+![2D_obs_vs_calc](https://user-images.githubusercontent.com/5509037/152667662-15a8966c-72c4-439f-ab07-ac3df539ddba.PNG)
 
 Source code 2D_4A_noise_tests.c
 
 EXCEL results here:
 
-[tl2D_1.xlsx](https://github.com/jremington/UWB-Indoor-Localization_Arduino/files/8009383/tl2D_1.xlsx)
+[tl2D_1.xlsx](https://github.com/jremington/UWB-Indoor-Localization_Arduino/files/8009421/tl2D_1.xlsx)
 
 
 ## Ideas for future development
