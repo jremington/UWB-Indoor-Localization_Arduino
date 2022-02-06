@@ -54,7 +54,7 @@ I've posted C code that can be used to simulate and conduct various tests of the
 
 The plot below is from a run in which 1000 random positions were generated within the box defined by the anchors, noisy anchor distances were generated, and were used to make 1000 position estimates, each an average of 10 independent position calculations from 10 different sets of noisy distance data. Noise from the radio module distance estimates was simulated by adding +/- 10 cm (zero mean Gaussian distribution) to the calculated distances.  
 
-The plot suggests that a reasonable estimate the true coordinate error is obtained by multiplying the reported distance error by a factor 3.
+The plot suggests that a reasonable estimate the true coordinate error is obtained by multiplying the reported distance error by a factor 0.3.
 
 ![error_analysis](https://user-images.githubusercontent.com/5509037/152608604-b8ad3b52-d900-421b-a4cb-7c2bc54b87d2.PNG)
 
