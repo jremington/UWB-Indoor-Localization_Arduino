@@ -13,7 +13,7 @@ minor changes required to eliminate compilation errors using the ESP32_Arduino I
 
 The code collects distances from the tag to all anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations. For the method, see this short technical paper: https://www.th-luebeck.de/fileadmin/media_cosa/Dateien/Veroeffentlichungen/Sammlung/TR-2-2015-least-sqaures-with-ToA.pdf
 
-An advantage of this particular approach is its marvelous simplicity, accuracy, and that the normal "A" matrix depends only on the anchor configuration, and thus potentially unstable matrix inversion needs to happen only once.
+Avantages of this particular approach include its marvelous simplicity, accuracy, and that the normal "A" matrix depends only on the anchor configuration, and thus potentially unstable matrix inversion needs to happen only once.
 
 ### HARDWARE REQUIRED: four (2D), five (3D) or more ESP32_UWB modules from makerfabs:
 https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
