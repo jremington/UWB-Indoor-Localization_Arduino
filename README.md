@@ -28,7 +28,7 @@ DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000
 
 DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_Antennna-Delay-Calibration_V1.2.pdf
 
-I chose a uniquely identified tag, later used to report positions, as the common factor, with its anchor delay set at the Arduino DW1000 library default=16384 (which is too small) and calibrated each individual anchor at a distance of 7.19 meters. Somewhere in the Decawave documentation, it is recommended that the tag be assigned antenna delay = 0 and calibrate the anchors accordingly, but I have not experimented with that option.
+I chose a uniquely identified module, later used as the roving tag to report positions, as the common factor. Its antenna delay is set at the Arduino DW1000 library default=16384 (which is too small) and calibrated each individual anchor at a distance of 7.19 meters. Somewhere in the Decawave documentation, it is recommended that the tag be assigned antenna delay = 0 and calibrate the anchors accordingly, but I have not experimented with that option.
 
 The plot below shows the result for calibration of one anchor/tag pair and demonstrates that +/- 10 cm accuracy is achieved over a range of 1 to 8 m. I have not experimented with larger distances.
 
