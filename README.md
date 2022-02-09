@@ -58,7 +58,9 @@ I've posted C code that can be used to simulate and conduct various tests of the
 
 ## 3D tests
 
-Initial tests with the 3D, 4 anchor (not overdetermined) case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will certainly help.
+Initial tests with the 3D, 4 anchor (not overdetermined) case indicate that the returned position is very sensitive to noise in the distance measurements as well as the details of anchor placement.  Averaging of several position measurements and/or distance measurements is clearly required. Increasing the number of anchors, so that the least squares problem is overdetermined, will certainly help.  
+
+As stated above, the localization procedure publishes a crude estimate of the error in position, which is in actuality the RMS deviation of calculated versus measured tag-anchor distances.
 
 The plot below is from a run in which 1000 random positions were generated within the box defined by the anchors, noisy anchor distances were generated, and were used to make 1000 position estimates, each an average of 10 independent position calculations from 10 different sets of noisy distance data. Noise from the radio module distance estimates was simulated by adding +/- 10 cm (zero mean Gaussian distribution) to the calculated distances.  
 
@@ -66,20 +68,20 @@ The plot suggests that a reasonable estimate the true coordinate error is obtain
 
 ![error_analysis](https://user-images.githubusercontent.com/5509037/152608604-b8ad3b52-d900-421b-a4cb-7c2bc54b87d2.PNG)
 
-On the other hand, averaging multiple measurements looks to provide a better estimate of the coordinate error. The plot below shows the result of a 1000 point simulation, where each point was obtained as an average of 10 individual position estimates, each based on noisy distance data as above. The standard deviation of the average, divided by 2, appears to be a reasonable estimate of the true coordinate error. The SD of the average is dominated by errors in the Z coordinates.
+On the other hand, averaging multiple measurements looks to provide a much better estimate of the coordinate error. The plot below shows the result of a 1000 point simulation, where each point was obtained as an average of 10 individual position estimates, each based on noisy distance data as above. The standard deviation of the average, divided by 2, appears to be a reasonable estimate of the true coordinate error. The standard deviation of the average is in this particular case dominated by errors in the Z coordinates, largely due to too little range in the anchor Z coordinates.
 
 ![position_averaging](https://user-images.githubusercontent.com/5509037/152617681-fb00e5b7-99f0-4a1d-b684-ae8821c010f5.PNG)
 
 ## 2D tests
 
-The 2D_4A calculation, which is overdetermined, works MUCH better!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement and 10-fold position averaging, the 2D (x,y) position error is strictly comparable to the assumed noise in the distance measurements (+/- 10 cm). 
+The 2D_4A (4 anchor) calculation, which is overdetermined, is MUCH more accurate than the 3D, 4 anchor case!  Simulations using the "2D_4A_noise_tests" code shows that with proper anchor placement and 10-fold position averaging, the 2D (x,y) position error is strictly comparable to the assumed noise in the distance measurements (+/- 10 cm). 
 
 Plot for 1000 simulations:  
 ![2D_obs_vs_calc](https://user-images.githubusercontent.com/5509037/152667662-15a8966c-72c4-439f-ab07-ac3df539ddba.PNG)
 
 Source code 2D_4A_noise_tests.c
 
-EXCEL results here:
+EXCEL file of those results here:
 
 [tl2D_1.xlsx](https://github.com/jremington/UWB-Indoor-Localization_Arduino/files/8009421/tl2D_1.xlsx)
 
