@@ -22,7 +22,7 @@ char anchor_addr[]= "82:00:5B:D5:A9:9A:E2:9C";  //#2
 uint16_t Adelay=16610;
 
 // calibration distance
-float dist_m = 7.19 //this example, meters
+float dist_m = 7.19; //this example, meters
 
 #define SPI_SCK 18
 #define SPI_MISO 19
