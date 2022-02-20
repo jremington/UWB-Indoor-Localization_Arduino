@@ -21,7 +21,8 @@ https://www.makerfabs.com/esp32-uwb-ultra-wideband.html
 
 ## Setup and Installation Notes:  
 
-1. Each anchor must be individually calibrated!  This is done quite simply by trial and error adjustment of the "antenna delay" parameter, which is unique to each anchor, in order that a known distance is accurately reported. Only one module of any pair need be calibrated. If one module has the library default antenna delay of 16384, in my experience the antenna delay of other module will be in the range of 16550 to 16650 (units are 15 picoseconds).
+1. Each anchor must be individually calibrated!  This is done quite simply by adjustment of the "antenna delay" parameter, which is unique to each anchor, in order that a known distance is accurately reported. Only one module of any pair need be calibrated. If one module has the library default antenna delay of 16384, in my experience the antenna delay of other module will be in the range of 16550 to 16650 (units are 15 picoseconds).
+
 For general information on the DW1000 module and antenna delay calibration, see these materials:
 
 DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000_user_manual_2.11.pdf
@@ -29,6 +30,22 @@ DW1000 User manual https://www.decawave.com/sites/default/files/resources/dw1000
 DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_Antennna-Delay-Calibration_V1.2.pdf
 
 I chose a uniquely identified module, later used as the roving tag to report positions, as the common factor. Its antenna delay is set at the Arduino DW1000 library default=16384 (which is too small) and calibrated each individual anchor at a distance of 7.19 meters. Somewhere in the Decawave documentation, it is recommended that the tag be assigned antenna delay = 0 and calibrate the anchors accordingly, but I have not experimented with that option.
+
+To perform anchor calibration:
+To use the new procedure.
+
+1) Download the most recent modified version of the DW1000 library from this Github site and replace any old versions in the Arduino library folder
+
+2) Set up a tag using the ESP32_UWB_setup_tag.ino Arduino code
+
+3) Power up the tag and set it 7-8 m away from the anchor
+
+3) Measure the distance from the tag to the anchor, and enter this distance (variable (this_anchor_target_dist) into the ESP32_anchor_autocalibrate.ino Arduino code
+
+4) compile/link/run the autocalibrate anchor code. It does a binary search to find the optimal antenna delay, so that the measured and Time of Flight distances match.
+
+5) Enter the reported antenna delay to the ESP32_UWB_anchor_calibrate code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address!
+
 
 The plot below shows the result for calibration of one anchor/tag pair and demonstrates that +/- 10 cm accuracy is achieved over a range of 1 to 8 m. I have not experimented with larger distances.
 
