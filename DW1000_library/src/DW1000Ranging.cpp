@@ -178,11 +178,9 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 		_currentShortAddress[1] = _currentAddress[1];
 	}
 	
-	//configure the network for mac filtering
+	//we configur the network for mac filtering
 	//(device Address, network ID, frequency)
-	
-	uint16_t currShortAddr = _currentShortAddress[0]*256+_currentShortAddress[1];
-	DW1000Ranging.configureNetwork(currShortAddr, 0xDECA, mode);
+	DW1000Ranging.configureNetwork(_currentShortAddress[0]*256+_currentShortAddress[1], 0xDECA, mode);
 	
 	//general start:
 	generalStart();
@@ -190,8 +188,7 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 	//defined type as anchor
 	_type = ANCHOR;
 	
-	Serial.print("ANCHOR short address: ");
-	Serial.println(currShortAddr, HEX);
+	Serial.println("### ANCHOR ###");
 	
 }
 
@@ -371,7 +368,6 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 		//we have a short mac frame message (poll, range, range report, etc..)
 		return datas[SHORT_MAC_LEN];
 	}
-	return -1; //SJR, fix flagged return error
 }
 
 void DW1000RangingClass::loop() {

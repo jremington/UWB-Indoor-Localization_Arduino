@@ -1,5 +1,7 @@
-// mod by sjr 1/18/2022 see https://github.com/Makerfabs/Makerfabs-ESP32-UWB
 /*
+ 
+ last update 2/20/2022 sjr
+ 
  * Copyright (c) 2015 by Thomas Trojer <thomas@trojer.net>
  * Decawave DW1000 library for arduino.
  *
@@ -1012,6 +1014,12 @@ void DW1000Class::interruptOnAutomaticAcknowledgeTrigger(boolean val) {
 void DW1000Class::setAntennaDelay(const uint16_t value) {
 	_antennaDelay.setTimestamp(value);
 	_antennaCalibrated = true;
+	// added by SJR -- commit to device register (see function commitConfiguration())
+	byte antennaDelayBytes[DW1000Time::LENGTH_TIMESTAMP];
+	_antennaDelay.getTimestamp(antennaDelayBytes);
+	writeBytes(TX_ANTD, NO_SUB, antennaDelayBytes, LEN_TX_ANTD);
+	writeBytes(LDE_IF, LDE_RXANTD_SUB, antennaDelayBytes, LEN_LDE_RXANTD);
+	// added by SJR
 }
 
 uint16_t DW1000Class::getAntennaDelay() {
@@ -1092,18 +1100,7 @@ void DW1000Class::commitConfiguration() {
 	writeBytes(TX_ANTD, NO_SUB, antennaDelayBytes, LEN_TX_ANTD);
 	writeBytes(LDE_IF, LDE_RXANTD_SUB, antennaDelayBytes, LEN_LDE_RXANTD);
 }
-// sjr
-void DW1000Class::commitAntennaDelay() {
-		byte antennaDelayBytes[DW1000Time::LENGTH_TIMESTAMP];
-//	if( _antennaDelay.getTimestamp() == 0 && _antennaCalibrated == false) {
-//		_antennaDelay.setTimestamp(16384);
-//		_antennaCalibrated = true;
-//	} // Compatibility with old versions.
-	_antennaDelay.getTimestamp(antennaDelayBytes);
 
-	writeBytes(TX_ANTD, NO_SUB, antennaDelayBytes, LEN_TX_ANTD);
-}
-// sjr
 void DW1000Class::waitForResponse(boolean val) {
 	setBit(_sysctrl, LEN_SYS_CTRL, WAIT4RESP_BIT, val);
 }
