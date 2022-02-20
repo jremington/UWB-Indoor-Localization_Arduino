@@ -40,12 +40,11 @@ To use the new procedure.
 
 3) Power up the tag and set it 7-8 m away from the anchor
 
-3) Measure the distance from the tag to the anchor, and enter this distance (variable (this_anchor_target_dist) into the ESP32_anchor_autocalibrate.ino Arduino code
+3) Measure the distance from the tag to the anchor, and enter this distance (variable: this_anchor_target_dist) into the ESP32_anchor_autocalibrate.ino Arduino code
 
 4) compile/link/run the autocalibrate anchor code. It does a binary search to find the optimal antenna delay, so that the measured and Time of Flight distances match.
 
-5) Enter the reported antenna delay to the ESP32_UWB_anchor_calibrate code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address!
-
+5) Enter the reported antenna delay to the ESP32_UWB_setup_anchor code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address.
 
 The plot below shows the result for calibration of one anchor/tag pair and demonstrates that +/- 10 cm accuracy is achieved over a range of 1 to 8 m. I have not experimented with larger distances.
 
