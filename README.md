@@ -32,11 +32,10 @@ DW1000 Calibration: https://www.decawave.com/wp-content/uploads/2018/10/APS014_A
 I chose a uniquely identified module, later used as the roving tag to report positions, as the common factor. Its antenna delay is set at the Arduino DW1000 library default=16384 (which is too small) and calibrated each individual anchor at a distance of 7.19 meters. Somewhere in the Decawave documentation, it is recommended that the tag be assigned antenna delay = 0 and calibrate the anchors accordingly, but I have not experimented with that option.
 
 To perform anchor calibration:
-To use the new procedure.
 
 1) Download the most recent modified version of the DW1000 library from this Github site and replace any old versions in the Arduino library folder
 
-2) Set up a tag using the ESP32_UWB_setup_tag.ino Arduino code
+2) Set up a tag using the ESP32_UWB_setup_tag.ino Arduino code. The antenna delay parameter should be set to the library default.
 
 3) Power up the tag and set it 7-8 m away from the anchor
 
@@ -44,7 +43,7 @@ To use the new procedure.
 
 4) compile/link/run the autocalibrate anchor code. It does a binary search to find the optimal antenna delay, so that the measured and Time of Flight distances match.
 
-5) Enter the reported antenna delay to the ESP32_UWB_setup_anchor code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address.
+5) Enter the reported anchor antenna delay to the ESP32_UWB_setup_anchor code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address.
 
 The plot below shows the result for calibration of one anchor/tag pair and demonstrates that +/- 10 cm accuracy is achieved over a range of 1 to 8 m. I have not experimented with larger distances.
 
