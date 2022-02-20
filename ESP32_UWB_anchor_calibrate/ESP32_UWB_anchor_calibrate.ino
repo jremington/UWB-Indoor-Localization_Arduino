@@ -93,5 +93,5 @@ void newBlink(DW1000Device *device)
 void inactiveDevice(DW1000Device *device)
 {
     Serial.print("delete inactive device: ");
-    Serial.println(device->getShortAddress(), HEX);
+    Serial.println(device->getShortAddress(), HEX); 
 }
