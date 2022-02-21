@@ -102,8 +102,8 @@ EXCEL file of those results here:
 
 ## Ideas for future development
 
-1. Fix the DW10000 library. Range errors are common (e.g. negative distances), setAntennaDelay() doesn't update the device registers, etc.
-2. Have the anchor transmit its coordinates along with a range report.
+1. Fix the DW10000 library. Range errors are common (e.g. negative distances), etc.
+2. Have the anchor transmit its coordinates along with a range report?
 3. Implement use of bluetooth or WiFi to obtain tag coordinates, update tag and anchor parameters, etc.
 4. Reduce tag/anchor power consumption using sleep modes
 5. Your input to this list...
