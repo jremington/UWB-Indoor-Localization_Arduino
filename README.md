@@ -2,7 +2,7 @@
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
-It is probably safe to say that everyone wants their robot to know where it is and where it is headed, without human input. Companies like Pozyx offer complete systems to do this, which work well and are even Arduino-compatible, but they are prohibitively expensive for hobbyists.
+A robot should know where it is and which direction it is headed, without human input. Companies like Pozyx offer complete systems to do this, which work well and are even Arduino-compatible, but they are prohibitively expensive for hobbyists.
 
 Several years ago, Decawave announced inexpensive, ultra wide band 3-6 GHz transceiver modules capable of indoor ranging with +/- 10 cm accuracy. Although a DW1000 Arduino library has been developed, to date, I’ve seen only one ranging example suitable for DIY robot applications, and none that are capable of true indoor localization, i.e. accurately and unambiguously determining the (x, y) or (x, y, z) position of a tag.
 
