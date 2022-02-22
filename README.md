@@ -103,7 +103,8 @@ EXCEL file of those results here:
 ## Ideas for future development
 
 1. Fix the DW10000 library. Range errors are common (e.g. negative distances), etc.
-2. Have the anchor transmit its coordinates along with a range report?
-3. Implement use of bluetooth or WiFi to obtain tag coordinates, update tag and anchor parameters, etc.
-4. Reduce tag/anchor power consumption using sleep modes
-5. Your input to this list...
+2. Experiment with higher power transmit options, for larger distance ranging
+3. Have the anchor transmit its coordinates along with a range report?
+4. Implement use of bluetooth or WiFi to obtain tag coordinates, update tag and anchor parameters, etc.
+5. Reduce tag/anchor power consumption using sleep modes
+6. Your input to this list...
