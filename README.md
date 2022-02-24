@@ -11,7 +11,7 @@ This repository provides working example code for using Makerfabs ESP32_UWB modu
 The code makes extensive use of the DW1000 library by Thomas Trojer (https://github.com/thotro/arduino-dw1000), source code copied here for convenience, with
 minor changes required to eliminate compilation errors using the ESP32_Arduino IDE.
 
-The code collects distances from the tag to all anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations. For the method, see this short technical paper: https://www.th-luebeck.de/fileadmin/media_cosa/Dateien/Veroeffentlichungen/Sammlung/TR-2-2015-least-sqaures-with-ToA.pdf
+The tag code collects distances to all anchors and solves the linear least squares problem of computing the tag location from known distances and anchor locations. For the method, see this short technical paper: https://www.th-luebeck.de/fileadmin/media_cosa/Dateien/Veroeffentlichungen/Sammlung/TR-2-2015-least-sqaures-with-ToA.pdf
 
 Avantages of this particular approach (one of many) include its marvelous simplicity, linearity, accuracy, and that the normal "A" matrix depends only on the anchor configuration, and thus potentially unstable matrix inversion needs to happen only once.
 
