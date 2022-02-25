@@ -1,7 +1,7 @@
 // This program calibrates an ESP32_UWB module intended for use as a fixed anchor point
 // binary search to find anchor antenna delay for calibrate for a known distance
 //
-// modified version of Thomas Trojer's DW1000 required!
+// modified version of Thomas Trojer's DW1000 library is required!
 //
 // input required, possibly unique to each tag:
 // 1) accurately measured distance from anchor to tag
