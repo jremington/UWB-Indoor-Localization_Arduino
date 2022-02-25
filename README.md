@@ -43,7 +43,7 @@ To perform anchor calibration:
 
 4) compile/link/run the autocalibrate anchor code. It does a binary search to find the optimal antenna delay, so that the measured and Time of Flight distances match.
 
-5) Enter the reported anchor antenna delay to the ESP32_UWB_setup_anchor code, specific for that anchor, and run that code to set up the anchor. Don't forget to set the proper anchor MAC address.
+5) Enter the reported anchor antenna delay to the ESP32_UWB_setup_anchor code, specific for that anchor, and run that code to set up the anchor. Don't forget to set each anchor to have a unique anchor MAC address. My arbitrary naming convention is for anchors 1, 2, 3, ... to have the lowest order byte of the MAC address set to 81, 82, 83, ...  and the ranging code running on the tag CURRENTLY REQUIRES them to be named accordingly.
 
 The plot below shows the result for calibration of one anchor/tag pair and demonstrates that +/- 10 cm accuracy is achieved over a range of 1 to 8 m. I have not experimented with larger distances.
 
