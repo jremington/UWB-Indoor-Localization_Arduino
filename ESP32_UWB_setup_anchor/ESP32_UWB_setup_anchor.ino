@@ -1,5 +1,8 @@
 //anchor #4 setup
+
+
 // be sure to edit anchor_addr and select the previously calibrated anchor delay
+// my naming convention is anchors 1, 2, 3, ... have the lowest order byte of the MAC address set to 81, 82, 83, ...
 
 #include <SPI.h>
 #include "DW1000Ranging.h"
