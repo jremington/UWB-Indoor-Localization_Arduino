@@ -1,9 +1,11 @@
 // This program calibrates an ESP32_UWB module intended for use as a fixed anchor point
-// binary search to find anchor antenna delay for calibrate for a known distance
+// uses binary search to find anchor antenna delay to calibrate against a known distance
 //
 // modified version of Thomas Trojer's DW1000 library is required!
-//
-// input required, possibly unique to each tag:
+
+// Remote tag (at origin) must be set up with default antenna delay (library default = 16384)
+
+// user input required, possibly unique to each tag:
 // 1) accurately measured distance from anchor to tag
 // 2) address of anchor
 //
