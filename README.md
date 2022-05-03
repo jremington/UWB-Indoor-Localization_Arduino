@@ -2,6 +2,16 @@
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
+UPDATE 5/3/2022: First comprehensive range tests done (line of sight, antennas parallel), and there is a clear winner! 
+
+For up to 33 m, choose this initialization option: The other options lead to 5-10 m at best. 
+```
+//tag:
+DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false); 
+// anchor:
+DW1000Ranging.startAsAnchor(anchor_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
+```
+
 A robot should know where it is and which direction it is headed, without human input. Companies like Pozyx offer complete systems to do this, which work well and are even Arduino-compatible, but they are prohibitively expensive for hobbyists.
 
 Several years ago, Decawave announced inexpensive, ultra wide band 3-6 GHz transceiver modules capable of indoor ranging with +/- 10 cm accuracy. Although a DW1000 Arduino library has been developed, to date, I’ve seen only one ranging example suitable for DIY robot applications, and none that are capable of true indoor localization, i.e. accurately and unambiguously determining the (x, y) or (x, y, z) position of a tag.
