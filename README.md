@@ -4,7 +4,7 @@
 
 UPDATE 5/3/2022: First comprehensive range tests done (line of sight, antennas parallel), and there is a clear winner! 
 
-For up to 33 m, choose this initialization option: The other options lead to 5-10 m at best. 
+Choose this initialization option for range up to 33 m: The other options lead to 5-10 m at best. This has been the default for some time.
 ```
 //tag:
 DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false); 
