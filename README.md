@@ -2,7 +2,7 @@
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
-UPDATE 5/3/2022: First comprehensive range tests done (line of sight, antennas parallel), and there is a clear winner! Choose this initialization option for range up to 33 m: The other options lead to 5-10 m at best. The option below has been the default for some time.
+UPDATE 5/3/2022: First comprehensive range tests done (line of sight, antennas parallel), and there is a clear winner! Choose this initialization option for range up to 33 m: The other options lead to 5-10 m at best. The option below has been the default for some time.  Use the new "high power" library for > 50 m range under ideal conditions. Battery life will be shortened!
 ```
 //tag:
 DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false); 
