@@ -71,12 +71,8 @@ void newRange()
   static float last_delta = 0.0;
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress(), DEC);
 
-  float dist = 0;
-  for (int i = 0; i < 100; i++) {
-    // get and average 100 measurements
-    dist += DW1000Ranging.getDistantDevice()->getRange();
-  }
-  dist /= 100.0;
+    float dist = DW1000Ranging.getDistantDevice()->getRange();
+
   Serial.print(",");
   Serial.print(dist); 
   if (Adelay_delta < 3) {
