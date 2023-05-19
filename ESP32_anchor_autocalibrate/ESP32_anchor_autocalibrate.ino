@@ -30,9 +30,9 @@ const uint8_t PIN_SS = 4;   // spi select pin
 
 
 char this_anchor_addr[] = "84:00:22:EA:82:60:3B:9C";
-float this_anchor_target_distance = 296*0.0254; //measured distance to anchor in m
+float this_anchor_target_distance = 8; //measured distance to anchor in m
 
-uint16_t this_anchor_Adelay = 16600; //starting value
+uint16_t this_anchor_Adelay = 16600; //starting value 16600
 uint16_t Adelay_delta = 100; //initial binary search step size
 
 
@@ -71,8 +71,12 @@ void newRange()
   static float last_delta = 0.0;
   Serial.print(DW1000Ranging.getDistantDevice()->getShortAddress(), DEC);
 
-    float dist = DW1000Ranging.getDistantDevice()->getRange();
-
+  float dist = 0;
+  for (int i = 0; i < 100; i++) {
+    // get and average 100 measurements
+    dist += DW1000Ranging.getDistantDevice()->getRange();
+  }
+  dist /= 100.0;
   Serial.print(",");
   Serial.print(dist); 
   if (Adelay_delta < 3) {

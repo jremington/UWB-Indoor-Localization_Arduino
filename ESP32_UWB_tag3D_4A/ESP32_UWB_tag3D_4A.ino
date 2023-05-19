@@ -10,7 +10,7 @@
 #include "DW1000.h"
 #include "util/m33v3.h"   //matrix and vector macro library, all loops unrolled
 
-//#define DEBUG_TRILAT   //debug output in trilateration code
+#define DEBUG_TRILAT   //debug output in trilateration code
 //#define DEBUG_DISTANCES   //print collected anchor distances for algorithm
 //#define DEBUG_ANCHOR_ID  // print anchor IDs and raw distances
 
@@ -36,10 +36,10 @@ float current_distance_rmse = 0.0;  //error in distance calculations. Crude meas
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates
-  {0.0, 0.0, 0.97},
-  {3.99, 5.44, 1.14},
-  {3.71, -0.3, 0.61},
-  { -0.56, 4.88, 0.15}
+  {0.0, 0.0, 2.75},  // 84
+  {0.25, 0.0, 0.40}, // 87
+  {5.25, 0.0, 0.40}, // 85
+  {0.25, 11.0, 0.40} // 86
 };
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
@@ -77,16 +77,17 @@ void newRange()
 
   //index of this anchor, expecting values 1 to 4
   int index = DW1000Ranging.getDistantDevice()->getShortAddress() & 0x07; //expect devices 1 to 7
+  float range = DW1000Ranging.getDistantDevice()->getRange();
   if (index > 0 && index < 5) {
     last_anchor_update[index - 1] = millis();  //(-1) => array index
-    float range = DW1000Ranging.getDistantDevice()->getRange();
+    //float range = DW1000Ranging.getDistantDevice()->getRange();
     last_anchor_distance[index-1] = range;
     if (range < 0.0 || range > 30.0)     last_anchor_update[index - 1] = 0;  //sanity check, ignore this measurement
   }
 
 #ifdef DEBUG_ANCHOR_ID
   Serial.print(index); //anchor ID, raw range
-  Serial.print(" ");;
+  Serial.print(", ");;
   Serial.println(range);
 #endif
   //check for four measurements within the last interval
@@ -119,6 +120,11 @@ void newRange()
     Serial.write(',');
     Serial.println(current_distance_rmse);
   }
+  // Create a JSON payload with the anchor data
+  //String payload = String(DW1000Ranging.getDistantDevice()->getShortAddress(), HEX) + "," + String(DW1000Ranging.getDistantDevice()->getRange());
+
+  // Print the data to serial monitor
+  //Serial.println(payload);
 }  //end newRange
 
 void newDevice(DW1000Device *device)
@@ -221,6 +227,7 @@ int trilat3D_4A(void) {
     rmse += (d[i] - dc) * (d[i] - dc);
   }
   current_distance_rmse = sqrt(rmse / ((float)N_ANCHORS)); //copy to global
+  Serial.print(current_distance_rmse);
 
   return 1;
 }  //end trilat3D_4A
