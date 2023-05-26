@@ -9,7 +9,7 @@
 #include "DW1000.h"
 
 // leftmost two bytes below will become the "short address"
-char anchor_addr[] = "84:00:5B:D5:A9:9A:E2:9C"; //#4
+char anchor_addr[] = "82:00:5B:D5:A9:9A:E2:9C"; //#2
 
 //calibrated Antenna Delay setting for this anchor
 uint16_t Adelay = 16620;

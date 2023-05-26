@@ -10,8 +10,8 @@
 #include "DW1000.h"
 #include "util/m33v3.h"   //matrix and vector macro library, all loops unrolled
 
-#define DEBUG_TRILAT   //debug output in trilateration code
-//#define DEBUG_DISTANCES   //print collected anchor distances for algorithm
+//#define DEBUG_TRILAT   //debug output in trilateration code
+#define DEBUG_DISTANCES   //print collected anchor distances for algorithm
 //#define DEBUG_ANCHOR_ID  // print anchor IDs and raw distances
 
 #define SPI_SCK 18
@@ -27,7 +27,7 @@ const uint8_t PIN_SS = 4;   // spi select pin
 // TAG antenna delay defaults to 16384
 
 // leftmost two bytes below will become the "short address"
-char tag_addr[] = "7D:00:22:EA:82:60:3B:9C";
+char tag_addr[] = "8D:00:22:EA:82:60:3B:9C";
 float current_tag_position[3] = {0}; //tag current position (meters with respect to origin anchor)
 float current_distance_rmse = 0.0;  //error in distance calculations. Crude measure of coordinate error (needs to be characterized)
 
@@ -36,10 +36,10 @@ float current_distance_rmse = 0.0;  //error in distance calculations. Crude meas
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
 
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates
-  {0.0, 0.0, 2.75},  // 84
-  {0.25, 0.0, 0.40}, // 87
-  {5.25, 0.0, 0.40}, // 85
-  {0.25, 11.0, 0.40} // 86
+  {0.0, 0.0, 0.90}, // 81 {0.25, 0.0, 0.40} {5.25, 11.0, 0.40}
+  {3.0, 0.0, 0.40}, // 82
+  {3.0, 3.0, 0.40}, // 83
+  {0.0, 3.0, 0.90} // 84
 };
 
 uint32_t last_anchor_update[N_ANCHORS] = {0}; //millis() value last time anchor was seen
@@ -57,6 +57,9 @@ void setup()
   DW1000Ranging.attachNewRange(newRange);
   DW1000Ranging.attachNewDevice(newDevice);
   DW1000Ranging.attachInactiveDevice(inactiveDevice);
+
+  //Enable the filter to smooth the distance
+  //DW1000Ranging.useRangeFilter(true);
 
   // start as tag, do not assign random short address
 
@@ -85,12 +88,12 @@ void newRange()
     if (range < 0.0 || range > 30.0)     last_anchor_update[index - 1] = 0;  //sanity check, ignore this measurement
   }
 
-#ifdef DEBUG_ANCHOR_ID
-  Serial.print(index); //anchor ID, raw range
-  Serial.print(", ");;
-  Serial.println(range);
-#endif
-  //check for four measurements within the last interval
+  #ifdef DEBUG_ANCHOR_ID
+    Serial.print(index); //anchor ID, raw range
+    Serial.print(", ");
+    Serial.println(range);
+  #endif
+    //check for four measurements within the last interval
   int detected = 0;  //count anchors recently seen
 
   for (i = 0; i < N_ANCHORS; i++) {
@@ -100,7 +103,7 @@ void newRange()
   }
   if ( (detected == N_ANCHORS)) { //four recent measurements
 
-#ifdef DEBUG_DISTANCES
+  #ifdef DEBUG_DISTANCES
     // print distance and age of measurement
     uint32_t current_time = millis();
     for (i = 0; i < N_ANCHORS; i++) {
@@ -108,8 +111,7 @@ void newRange()
       Serial.print("\t");
       Serial.println(current_time - last_anchor_update[i]); //age in millis
     }
-#endif
-
+  #endif
     trilat3D_4A();
     Serial.print("P= ");  //result
     Serial.print(current_tag_position[0]);
@@ -160,7 +162,7 @@ int trilat3D_4A(void) {
 #ifdef DEBUG_TRILAT
   char line[60];
   snprintf(line, sizeof line, "d: %6.2f %6.2f %6.2f d= %6.2f", d[0], d[1], d[2], d[3]);
-  Serial.println(line);
+  //Serial.println(line);
 #endif
 
   if (first) {  //intermediate fixed vectors
@@ -215,7 +217,7 @@ int trilat3D_4A(void) {
   float posn2[3];
   MAT_DOT_VEC_3X3(posn2, Ainv, b);
   // copy to global current_tag_position[]
-  for (i = 0; i < 3; i++) current_tag_position[i] = posn2[i] * 0.5; //remove factor of 2
+  for (i = 0; i < 3; i++) {current_tag_position[i] = posn2[i] * 0.5;} //remove factor of 2
 
   //rms error in measured versus calculated distances
   float x[3] = {0}, rmse = 0.0, dc = 0.0;
@@ -227,7 +229,7 @@ int trilat3D_4A(void) {
     rmse += (d[i] - dc) * (d[i] - dc);
   }
   current_distance_rmse = sqrt(rmse / ((float)N_ANCHORS)); //copy to global
-  Serial.print(current_distance_rmse);
+  //Serial.print(current_distance_rmse);
 
   return 1;
 }  //end trilat3D_4A
