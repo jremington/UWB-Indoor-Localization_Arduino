@@ -9,6 +9,8 @@
 #include "DW1000Ranging.h"
 #include "DW1000.h"
 #include "util/m33v3.h"   //matrix and vector macro library, all loops unrolled
+#include <PubSubClient.h>
+#include <WiFi.h>
 
 //#define DEBUG_TRILAT   //debug output in trilateration code
 #define DEBUG_DISTANCES   //print collected anchor distances for algorithm
@@ -35,8 +37,20 @@ float current_distance_rmse = 0.0;  //error in distance calculations. Crude meas
 #define N_ANCHORS 4   //THIS VERSION WORKS ONLY WITH 4 ANCHORS. May be generalized to 5 or more.
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
 
+// WiFi credentials
+const char* ssid = "VJ2_2.4G";
+const char* password = "0380563312";
+
+// MQTT broker
+const char* mqtt_server = "192.168.2.14";
+const char* mqtt_topic = "tag_positions";
+
+// WiFi and MQTT client
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
+
 float anchor_matrix[N_ANCHORS][3] = { //list of anchor coordinates
-  {0.0, 0.0, 0.90}, // 81 {0.25, 0.0, 0.40} {5.25, 11.0, 0.40}
+  {0.0, 0.0, 0.40}, // 81 {0.25, 0.0, 0.40} {5.25, 11.0, 0.40}
   {3.0, 0.0, 0.40}, // 82
   {3.0, 3.0, 0.40}, // 83
   {0.0, 3.0, 0.90} // 84
@@ -62,13 +76,17 @@ void setup()
   //DW1000Ranging.useRangeFilter(true);
 
   // start as tag, do not assign random short address
-
   DW1000Ranging.startAsTag(tag_addr, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, false);
+
+  setupWiFi();
+  setupMQTT();
 }
 
 void loop()
 {
   DW1000Ranging.loop();
+  loopMQTT();
+  publishTagPosition();
 }
 
 // collect distance data from anchors, presently configured for 4 anchors
@@ -233,3 +251,44 @@ int trilat3D_4A(void) {
 
   return 1;
 }  //end trilat3D_4A
+
+void setupWiFi() {
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+
+  Serial.println("Connected to WiFi");
+}
+
+void setupMQTT() {
+  mqttClient.setServer(mqtt_server, 1883);
+}
+
+void loopMQTT() {
+  if (!mqttClient.connected()) {
+    reconnectMQTT();
+  }
+  mqttClient.loop();
+}
+
+void reconnectMQTT() {
+  while (!mqttClient.connected()) {
+    Serial.println("Connecting to MQTT...");
+    if (mqttClient.connect("ESP32Client")) {
+      Serial.println("Connected to MQTT");
+    } else {
+      Serial.print("Failed, rc=");
+      Serial.print(mqttClient.state());
+      Serial.println(" Retrying in 5 seconds...");
+      delay(5000);
+    }
+  }
+}
+
+void publishTagPosition() {
+  String payload = String(current_tag_position[0]) + "," + String(current_tag_position[1]) + "," + String(current_tag_position[2]);
+  mqttClient.publish(mqtt_topic, payload.c_str());
+}
