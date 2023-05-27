@@ -38,11 +38,11 @@ float current_distance_rmse = 0.0;  //error in distance calculations. Crude meas
 #define ANCHOR_DISTANCE_EXPIRED 5000   //measurements older than this are ignore (milliseconds)
 
 // WiFi credentials
-const char* ssid = "VJ2_2.4G";
-const char* password = "0380563312";
+const char* ssid = "Your_SSID";
+const char* password = "Password_wifi";
 
 // MQTT broker
-const char* mqtt_server = "192.168.2.14";
+const char* mqtt_server = "Your_Broker_Address";
 const char* mqtt_topic = "tag_positions";
 
 // WiFi and MQTT client
