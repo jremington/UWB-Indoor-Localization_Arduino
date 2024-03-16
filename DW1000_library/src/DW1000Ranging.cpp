@@ -242,7 +242,7 @@ boolean DW1000RangingClass::addNetworkDevices(DW1000Device* device, boolean shor
 	
 	if(addDevice) {
 		device->setRange(0);
-		memcpy(&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));
+		memcpy((uint8_t *)&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device)); //3_16_24 add pointer cast sjr
 		_networkDevices[_networkDevicesNumber].setIndex(_networkDevicesNumber);
 		_networkDevicesNumber++;
 		return true;
@@ -269,7 +269,7 @@ boolean DW1000RangingClass::addNetworkDevices(DW1000Device* device) {
 		{
 			_networkDevicesNumber = 0;
 		}
-		memcpy(&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));
+		memcpy((uint8_t *)&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));  //3_16_24 pointer cast sjr
 		_networkDevices[_networkDevicesNumber].setIndex(_networkDevicesNumber);
 		_networkDevicesNumber++;
 		return true;
@@ -290,7 +290,7 @@ void DW1000RangingClass::removeNetworkDevices(int16_t index) {
 	else {
 		//we translate all the element wich are after the one we want to delete.
 		for(int16_t i = index; i < _networkDevicesNumber-1; i++) { // TODO 8bit?
-			memcpy(&_networkDevices[i], &_networkDevices[i+1], sizeof(DW1000Device));
+			memcpy((uint8_t *)&_networkDevices[i], &_networkDevices[i+1], sizeof(DW1000Device));  //3_16_24 pointer cast sjr
 			_networkDevices[i].setIndex(i);
 		}
 		_networkDevicesNumber--;
