@@ -18,7 +18,7 @@ A robot should know where it is and which direction it is headed, without human 
 
 Several years ago, Decawave announced inexpensive, ultra wide band 3-6 GHz transceiver modules capable of indoor ranging with +/- 10 cm accuracy. Although a DW1000 Arduino library has been developed, to date, I’ve seen only one ranging example suitable for DIY robot applications, and none that are capable of true indoor localization, i.e. accurately and unambiguously determining the (x, y) or (x, y, z) position of a tag.
 
-This repository provides working example code for using Makerfabs ESP32_UWB modules to estimate the 2D or 3D position of a tag, in the presence of 3 or 4 anchors at known locations. With careful anchor calibration and anchor position determination, +/- 10 cm accuracy in tag position can be obtained.
+This repository provides working example code for using Makerfabs ESP32_UWB modules to estimate the 2D or 3D position of a tag, in the presence of 3 or 4 anchors at known locations. With careful anchor calibration and anchor position determination, +/- 10 cm accuracy in tag position can be obtained.  ONLY ONE TAG is supported (library limitation).
 
 The code makes extensive use of the DW1000 library by Thomas Trojer (https://github.com/thotro/arduino-dw1000), source code copied here for convenience, with
 minor changes required to eliminate compilation errors using the ESP32_Arduino IDE. I've added code that is required for the tag autocalibrate procedure, so please use the library version in this repository.
