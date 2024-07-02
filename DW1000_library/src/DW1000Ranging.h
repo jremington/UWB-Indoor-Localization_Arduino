@@ -188,8 +188,10 @@ private:
 	
 	//for ranging protocole (ANCHOR)
 	static void transmitInit();
+	static void transmit(byte datas[], uint16_t len);
 	static void transmit(byte datas[]);
 	static void transmit(byte datas[], DW1000Time time);
+	static void transmit(byte datas[], uint16_t len, DW1000Time time);
 	static void transmitBlink();
 	static void transmitRangingInit(DW1000Device* myDistantDevice);
 	static void transmitPollAck(DW1000Device* myDistantDevice);
