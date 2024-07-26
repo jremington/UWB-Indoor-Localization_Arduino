@@ -201,6 +201,21 @@ private:
 	static void transmitPoll(DW1000Device* myDistantDevice);
 	static void transmitRange(DW1000Device* myDistantDevice);
 	
+	void handleSentMessage();
+	void handleAnchorSentMessage(int messageType);
+	void handleTagSentMessage(int messageType);
+	void handleRangeMessage();
+	void handleReceivedMessage();
+	void handleBlinkMessage();
+	void handleRangingInitMessage();
+	void handleShortMACFrame(int messageType);
+	void handleAnchorReceivedMessage(int messageType, DW1000Device* myDistantDevice);
+	void handlePollMessage(DW1000Device* myDistantDevice);
+	void handleRangeReportMessage(DW1000Device* myDistantDevice);
+	void handleTagReceivedMessage(int messageType, DW1000Device* myDistantDevice);
+	void savePollTimestamp(DW1000Time& timePollSent);
+	void saveRangeTimestamp(DW1000Time& timeRangeSent);
+	
 	//methods for range computation
 	static void computeRangeAsymmetric(DW1000Device* myDistantDevice, DW1000Time* myTOF);
 	

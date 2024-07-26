@@ -1,4 +1,11 @@
 # UWB-Indoor-Localization
+This is a fork of the UWB Indoor Localization project.
+
+Original repository: [Original Repo](https://github.com/jremington/UWB-Indoor-Localization_Arduino)
+
+Forked repository: [My Fork](https://github.com/thire66/UWB-Indoor-Localization_Arduino)
+
+
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
