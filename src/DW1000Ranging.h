@@ -61,6 +61,7 @@
 //sketch type (anchor or tag)
 #define TAG 0
 #define ANCHOR 1
+#define MASTER 1
 
 //default timer delay
 #define DEFAULT_TIMER_DELAY 80
@@ -81,7 +82,7 @@ public:
 	static void    initCommunication(uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = 2);
 	static void    configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[]);
 	static void    generalStart();
-	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true);
+	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const bool master = 0);
 	static void    startAsTag(char address[], const byte mode[], const bool randomShortAddress = true);
 	static boolean addNetworkDevices(DW1000Device* device, boolean shortAddress);
 	static boolean addNetworkDevices(DW1000Device* device);
@@ -134,6 +135,8 @@ private:
 	static DW1000Mac    _globalMac;
 	static int32_t      timer;
 	static int16_t      counterForBlink;
+	
+	static uint8_t      _master;
 	
 	//Handlers:
 	static void (* _handleNewRange)(void);

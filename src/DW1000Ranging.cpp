@@ -38,12 +38,15 @@ DW1000Device DW1000RangingClass::_networkDevices[MAX_DEVICES];
 byte         DW1000RangingClass::_currentAddress[8];
 byte         DW1000RangingClass::_currentShortAddress[2];
 byte         DW1000RangingClass::_lastSentToShortAddress[2];
+
 volatile uint8_t DW1000RangingClass::_networkDevicesNumber = 0; // TODO short, 8bit?
 int16_t      DW1000RangingClass::_lastDistantDevice    = 0; // TODO short, 8bit?
 DW1000Mac    DW1000RangingClass::_globalMac;
 
 //module type (anchor or tag)
 int16_t      DW1000RangingClass::_type; // TODO enum??
+uint8_t      DW1000RangingClass::_master = 0;
+
 
 // message flow state
 volatile byte    DW1000RangingClass::_expectedMsgId;
@@ -159,7 +162,7 @@ void DW1000RangingClass::generalStart() {
 }
 
 
-void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress) {
+void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, const bool master) {
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
 	//write the address on the DW1000 chip
@@ -189,7 +192,13 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 	
 	//defined type as anchor
 	_type = ANCHOR;
-	
+
+	//define anchor as master if master == 1
+	_master = master;
+	if(_master == MASTER){
+		Serial.print("\nI am a MASTER-ANCHOR");
+	}
+
 	Serial.print("\nANCHOR short address: ");
 	Serial.print(currShortAddr, HEX);
 	
@@ -268,13 +277,11 @@ boolean DW1000RangingClass::addNetworkDevices(DW1000Device* device) {
 	}
 	
 	if(addDevice) {
-		if(_type == ANCHOR) //for now let's start with 1 TAG
-		{
-			_networkDevicesNumber = 0;
-		}
 		memcpy((uint8_t *)&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));  //3_16_24 fix pointer cast sjr
 		_networkDevices[_networkDevicesNumber].setIndex(_networkDevicesNumber);
 		_networkDevicesNumber++;
+		Serial.print("\nDevice count: ");
+		Serial.print(_networkDevicesNumber);
 		return true;
 	}
 	
@@ -377,9 +384,9 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 void DW1000RangingClass::loop() {
 	//we check if needed to reset !
 	checkForReset();
-	uint32_t time = millis(); // TODO other name - too close to "timer"
-	if(time-timer > _timerDelay) {
-		timer = time;
+
+	if(millis()-timer > _timerDelay) {
+		timer = millis();
 		timerTick();
 	}
 	
@@ -461,10 +468,10 @@ void DW1000RangingClass::loop() {
 			byte address[8];
 			byte shortAddress[2];
 			_globalMac.decodeBlinkFrame(data, address, shortAddress);
+			
 			//we crate a new device with th tag
 			DW1000Device myTag(address, shortAddress);
-			
-			if(addNetworkDevices(&myTag)) {
+			if(addNetworkDevices(&myTag)){
 				if(_handleBlinkDevice != 0) {
 					(*_handleBlinkDevice)(&myTag);
 				}
@@ -494,11 +501,8 @@ void DW1000RangingClass::loop() {
 			byte address[2];
 			_globalMac.decodeShortMACFrame(data, address);
 			
-			
-			
 			//we get the device which correspond to the message which was sent (need to be filtered by MAC address)
-			DW1000Device* myDistantDevice = searchDistantDevice(address);
-			
+			DW1000Device* myDistantDevice = searchDistantDevice(address);	
 			
 			if((_networkDevicesNumber == 0) || (myDistantDevice == nullptr)) {
 				//we don't have the short address of the device in memory
