@@ -43,6 +43,8 @@
 #define BLINK 4
 #define RANGING_INIT 5
 
+#define SYNC 6
+
 #define LEN_DATA 90
 
 //Max devices we put in the networkDevices array ! Each DW1000Device is 74 Bytes in SRAM memory for now.
@@ -54,7 +56,7 @@
 
 //Default value
 //in ms
-#define DEFAULT_RESET_PERIOD 200
+#define DEFAULT_RESET_PERIOD 200 //200
 //in us
 #define DEFAULT_REPLY_DELAY_TIME 7000
 
@@ -82,8 +84,8 @@ public:
 	static void    initCommunication(uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = 2);
 	static void    configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[]);
 	static void    generalStart();
-	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const bool master = 0);
-	static void    startAsTag(char address[], const byte mode[], const bool randomShortAddress = true);
+	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const bool master = 0, const uint32_t SYNC_Periode =  102 * 8);
+	static void    startAsTag(char address[], const byte mode[], const bool randomShortAddress = true, const uint32_t TimeSlotStart = 0, const uint32_t TimeSlotEnd = 105);
 	static boolean addNetworkDevices(DW1000Device* device, boolean shortAddress);
 	static boolean addNetworkDevices(DW1000Device* device);
 	static void    removeNetworkDevices(int16_t index);
@@ -133,10 +135,17 @@ private:
 	static byte         _currentShortAddress[2];
 	static byte         _lastSentToShortAddress[2];
 	static DW1000Mac    _globalMac;
-	static int32_t      timer;
+	static uint32_t      timer;
 	static int16_t      counterForBlink;
 	
 	static uint8_t      _master;
+	static uint32_t     lastSyncTime;
+	static uint32_t     roundTripTime;
+
+	static uint32_t myTimeSlotStart; 
+	static uint32_t myTimeSlotEnd; 
+	static uint32_t synchronizedTime;
+	static uint32_t SYNC_INTERVAL;
 	
 	//Handlers:
 	static void (* _handleNewRange)(void);
@@ -163,7 +172,7 @@ private:
 	// reply times (same on both sides for symm. ranging)
 	static uint16_t     _replyDelayTimeUS;
 	//timer Tick delay
-	static uint16_t     _timerDelay;
+	static uint32_t     _timerDelay;
 	// ranging counter (per second)
 	static uint16_t     _successRangingCount;
 	static uint32_t    _rangingCountPeriod;
@@ -191,14 +200,19 @@ private:
 	
 	//for ranging protocole (ANCHOR)
 	static void transmitInit();
+	static void transmit(byte datas[], uint16_t len);
 	static void transmit(byte datas[]);
 	static void transmit(byte datas[], DW1000Time time);
+	static void transmit(byte datas[], uint16_t len, DW1000Time time);
 	static void transmitBlink();
 	static void transmitRangingInit(DW1000Device* myDistantDevice);
 	static void transmitPollAck(DW1000Device* myDistantDevice);
 	static void transmitRangeReport(DW1000Device* myDistantDevice);
 	static void transmitRangeFailed(DW1000Device* myDistantDevice);
 	static void receiver();
+
+	static void transmitSync();
+	static bool isMyTimeSlot();
 	
 	//for ranging protocole (TAG)
 	static void transmitPoll(DW1000Device* myDistantDevice);

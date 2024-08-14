@@ -123,7 +123,7 @@ void DW1000Class::select(uint8_t ss) {
 	// try locking clock at PLL speed (should be done already,
 	// but just to be sure)
 	enableClock(AUTO_CLOCK);
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	// reset chip (either soft or hard)
 	if(_rst != 0xff) {
 		// dw1000 data sheet v2.08 §5.6.1 page 20, the RSTn pin should not be driven high but left floating.
@@ -143,11 +143,11 @@ void DW1000Class::select(uint8_t ss) {
 	writeSystemEventMaskRegister();
 	// load LDE micro-code
 	enableClock(XTI_CLOCK);
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	manageLDE();
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	enableClock(AUTO_CLOCK);
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	
 	// read the temp and vbat readings from OTP that were recorded during production test
 	// see 6.3.1 OTP memory map
@@ -166,7 +166,7 @@ void DW1000Class::reselect(uint8_t ss) {
 
 void DW1000Class::begin(uint8_t irq, uint8_t rst) {
 	// generous initial init/wake-up-idle delay
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	// Configure the IRQ pin as INPUT. Required for correct interrupt setting for ESP8266
     	pinMode(irq, INPUT);
 	// start SPI
@@ -205,7 +205,7 @@ void DW1000Class::manageLDE() {
 	otpctrl[1]   = 0x80;
 	writeBytes(PMSC, PMSC_CTRL0_SUB, pmscctrl0, 2);
 	writeBytes(OTP_IF, OTP_CTRL_SUB, otpctrl, 2);
-	delay(5);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	pmscctrl0[0] = 0x00;
 	pmscctrl0[1] &= 0x02;
 	writeBytes(PMSC, PMSC_CTRL0_SUB, pmscctrl0, 2);
@@ -295,7 +295,7 @@ void DW1000Class::deepSleep() {
 
 void DW1000Class::spiWakeup(){
         digitalWrite(_ss, LOW);
-        delay(2);
+        vTaskDelay(pdMS_TO_TICKS(2));
         digitalWrite(_ss, HIGH);
         if (_debounceClockEnabled){
                 DW1000Class::enableDebounceClock();
@@ -310,9 +310,9 @@ void DW1000Class::reset() {
 		// dw1000 data sheet v2.08 §5.6.1 page 20, the RSTn pin should not be driven high but left floating.
 		pinMode(_rst, OUTPUT);
 		digitalWrite(_rst, LOW);
-		delay(2);  // dw1000 data sheet v2.08 §5.6.1 page 20: nominal 50ns, to be safe take more time
+		vTaskDelay(pdMS_TO_TICKS(2));  // dw1000 data sheet v2.08 §5.6.1 page 20: nominal 50ns, to be safe take more time
 		pinMode(_rst, INPUT);
-		delay(10); // dwm1000 data sheet v1.2 page 5: nominal 3 ms, to be safe take more time
+		vTaskDelay(pdMS_TO_TICKS(10)); // dwm1000 data sheet v1.2 page 5: nominal 3 ms, to be safe take more time
 		// force into idle mode (although it should be already after reset)
 		idle();
 	}
@@ -325,7 +325,7 @@ void DW1000Class::softReset() {
 	writeBytes(PMSC, PMSC_CTRL0_SUB, pmscctrl0, LEN_PMSC_CTRL0);
 	pmscctrl0[3] = 0x00;
 	writeBytes(PMSC, PMSC_CTRL0_SUB, pmscctrl0, LEN_PMSC_CTRL0);
-	delay(10);
+	vTaskDelay(pdMS_TO_TICKS(10));
 	pmscctrl0[0] = 0x00;
 	pmscctrl0[3] = 0xF0;
 	writeBytes(PMSC, PMSC_CTRL0_SUB, pmscctrl0, LEN_PMSC_CTRL0);

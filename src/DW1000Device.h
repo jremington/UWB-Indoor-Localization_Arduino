@@ -93,7 +93,7 @@ private:
 	//device ID
 	byte         _ownAddress[8];
 	byte         _shortAddress[2];
-	int32_t      _activity;
+	uint32_t      _activity;
 	uint16_t     _replyDelayTimeUS;
 	int8_t       _index; // not used
 	

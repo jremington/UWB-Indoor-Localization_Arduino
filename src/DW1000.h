@@ -36,6 +36,11 @@
 #include "DW1000Constants.h"
 #include "DW1000Time.h"
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/semphr.h>
+
+
 class DW1000Class {
 public:
 	/* ##### Init ################################################################ */

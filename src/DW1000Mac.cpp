@@ -56,6 +56,27 @@ void DW1000Mac::generateBlinkFrame(byte frame[], byte sourceAddress[], byte sour
 	incrementSeqNumber();
 }
 
+void DW1000Mac::generateSyncFrame(byte frame[], byte sourceAddress[], byte sourceShortAddress[]) {
+    // Frame Control: Set the first byte to display a synchronization frame
+    *frame = FC_1_SYNC; // Define a constant FC_1_SYNC for the synchronization frame type
+
+    // Sequence number: Set the second byte to the sequence number provided
+    *(frame + 1) = _seqNumber;
+
+    // Source address: Reverse the 64-bit source address and copy it into the frame
+    byte sourceAddressReverse[8];
+    reverseArray(sourceAddressReverse, sourceAddress, 8);
+    memcpy(frame + 2, sourceAddressReverse, 8);
+
+	//tag 2bytes address:
+	byte sourceShortAddressReverse[2];
+	reverseArray(sourceShortAddressReverse, sourceShortAddress, 2);
+	memcpy(frame+10, sourceShortAddressReverse, 2);
+
+    // Increment the sequence number for the next frame
+    incrementSeqNumber();
+}
+
 //the short fram usually for Resp, Final, or Report
 //2 bytes for Desination Address and 2 bytes for Source Address
 //total=9 bytes

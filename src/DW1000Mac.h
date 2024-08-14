@@ -27,6 +27,8 @@
 #define FC_2 0x8C
 #define FC_2_SHORT 0x88
 
+#define FC_1_SYNC 0xA0
+
 #define PAN_ID_1 0xCA
 #define PAN_ID_2 0xDE
 
@@ -61,6 +63,8 @@ public:
 	//total=12 bytes
 	void generateBlinkFrame(byte frame[], byte sourceAddress[], byte sourceShortAddress[]);
 	
+	void generateSyncFrame(byte frame[], byte sourceAddress[], byte sourceShortAddress[]);
+
 	//the short fram usually for Resp, Final, or Report
 	//2 bytes for Desination Address and 2 bytes for Source Address
 	//total=9 bytes
