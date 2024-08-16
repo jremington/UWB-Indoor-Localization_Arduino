@@ -372,8 +372,7 @@ void DW1000RangingClass::checkForInactiveDevices() {
 				(*_handleInactiveDevice)(&_networkDevices[i]);
 			}
 			//we need to delete the device from the array:
-			removeNetworkDevices(i);
-			
+			removeNetworkDevices(i);	
 		}
 	}
 }
@@ -400,27 +399,27 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 bool DW1000RangingClass::isMyTimeSlot() {
     // Check whether the current time is within the assigned time slot
     uint32_t currentTime = millis() - synchronizedTime;
-	if(currentTime >= myTimeSlotStart && currentTime <= myTimeSlotEnd){
-		Serial.print("\nCurrent Timeslot: " + String(currentTime));
+	if(currentTime >= myTimeSlotStart && currentTime + 50 < myTimeSlotEnd){
+		//Serial.print("\nCurrent Timeslot: " + String(currentTime));
     	return true;
 	}
 	return false;
 }
 
+
 void DW1000RangingClass::loop() {
 	
-
 	//we check if needed to reset !
 	checkForReset();
 
-	if(_master == MASTER && (millis() - lastSyncTime > SYNC_INTERVAL)){
+	if(_master == MASTER && (millis() - lastSyncTime >= SYNC_INTERVAL)){
 		transmitSync();
 		Serial.print("\nSync is transmitted: " + String(millis() - lastSyncTime));
 		lastSyncTime = millis();
 	}
 	if(millis()-timer > _timerDelay) {
-		timer = millis();
 		timerTick();
+		timer = millis();
 	}
 	
 	if(_sentAck){
@@ -500,7 +499,6 @@ void DW1000RangingClass::loop() {
 		if(messageType == SYNC && _type == TAG ) {
 			// Process synchronization message
 			synchronizedTime = millis();
-			return;
 		}
 
 		//we have just received a BLINK message from tag
@@ -532,7 +530,6 @@ void DW1000RangingClass::loop() {
 						(*_handleNewDevice)(&myAnchor);
 					}
 				}
-			
 				noteActivity();
 		}
 		else {
@@ -583,7 +580,6 @@ void DW1000RangingClass::loop() {
 							memcpy(&replyTime, data+SHORT_MAC_LEN+2+i*4+2, 2);
 							//we configure our replyTime;
 							_replyDelayTimeUS = replyTime;
-							
 							// on POLL we (re-)start, so no protocol failure
 							_protocolFailed = false;
 							
@@ -594,7 +590,6 @@ void DW1000RangingClass::loop() {
 							_expectedMsgId = RANGE;
 							transmitPollAck(myDistantDevice);
 							noteActivity();
-							
 							return;
 						}
 						
@@ -655,8 +650,7 @@ void DW1000RangingClass::loop() {
 								_lastDistantDevice = myDistantDevice->getIndex();
 								if(_handleNewRange != 0) {
 									(*_handleNewRange)();
-								}
-								
+								}					
 							}
 							else {
 								transmitRangeFailed(myDistantDevice);
@@ -667,12 +661,11 @@ void DW1000RangingClass::loop() {
 						}
 						
 					}
-					
-					
 				}
 			}
 			else if(_type == TAG) {
 					// get message and parse
+					
 					if(messageType != _expectedMsgId) {
 						// unexpected message, start over again
 						//not needed ?
@@ -776,14 +769,14 @@ void DW1000RangingClass::resetInactive() {
 
 void DW1000RangingClass::timerTick() {
 	if(_networkDevicesNumber > 0 && counterForBlink != 0) {
-		if(_type == TAG && isMyTimeSlot()) { //
+		if(_type == TAG && isMyTimeSlot()) { 
 			_expectedMsgId = POLL_ACK;
 			//send a prodcast poll
 			transmitPoll(nullptr);
 		}
 	}
 	else if(counterForBlink == 0) {
-		if(_type == TAG && (isMyTimeSlot() || _networkDevicesNumber==0)) {
+		if(_type == TAG) {
 			transmitBlink();
 		}
 		//check for inactive devices if we are a TAG or ANCHOR

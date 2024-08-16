@@ -57,8 +57,9 @@
 //Default value
 //in ms
 #define DEFAULT_RESET_PERIOD 200 //200
+
 //in us
-#define DEFAULT_REPLY_DELAY_TIME 7000
+#define DEFAULT_REPLY_DELAY_TIME 7000 //7000
 
 //sketch type (anchor or tag)
 #define TAG 0
@@ -66,7 +67,7 @@
 #define MASTER 1
 
 //default timer delay
-#define DEFAULT_TIMER_DELAY 80
+#define DEFAULT_TIMER_DELAY 25 //80 defines Poll Delay 
 
 //debug mode
 #ifndef DEBUG
@@ -135,7 +136,7 @@ private:
 	static byte         _currentShortAddress[2];
 	static byte         _lastSentToShortAddress[2];
 	static DW1000Mac    _globalMac;
-	static uint32_t      timer;
+	static uint32_t     timer;
 	static int16_t      counterForBlink;
 	
 	static uint8_t      _master;
