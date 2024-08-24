@@ -66,9 +66,6 @@
 #define ANCHOR 1
 #define MASTER 1
 
-//default timer delay
-#define DEFAULT_TIMER_DELAY 25 //80 defines Poll Delay 
-
 //debug mode
 #ifndef DEBUG
 #define DEBUG false
@@ -82,7 +79,7 @@ public:
 	static byte data[LEN_DATA];
 	
 	//initialisation
-	static void    initCommunication(uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = 2);
+	static void    initCommunication(uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = 2, const uint32_t Default_Timer_Delay = 80);
 	static void    configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[]);
 	static void    generalStart();
 	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const bool master = 0, const uint32_t SYNC_Periode =  102 * 8);
@@ -174,6 +171,7 @@ private:
 	static uint16_t     _replyDelayTimeUS;
 	//timer Tick delay
 	static uint32_t     _timerDelay;
+	static uint32_t     DEFAULT_TIMER_DELAY;
 	// ranging counter (per second)
 	static uint16_t     _successRangingCount;
 	static uint32_t    _rangingCountPeriod;

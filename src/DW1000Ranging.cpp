@@ -85,6 +85,8 @@ uint32_t  DW1000RangingClass::_resetPeriod;
 uint16_t  DW1000RangingClass::_replyDelayTimeUS;
 //timer delay
 uint32_t  DW1000RangingClass::_timerDelay;
+uint32_t  DW1000RangingClass::DEFAULT_TIMER_DELAY;
+
 // ranging counter (per second)
 uint16_t  DW1000RangingClass::_successRangingCount = 0;
 uint32_t  DW1000RangingClass::_rangingCountPeriod  = 0;
@@ -98,7 +100,7 @@ void (* DW1000RangingClass::_handleInactiveDevice)(DW1000Device*) = 0;
  * #### Init and end #######################################################
  * ######################################################################### */
 
-void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t myIRQ) {
+void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t myIRQ, const uint32_t Default_Timer_Delay) {
 	// reset line to the chip
 	_RST              = myRST;
 	_SS               = mySS;
@@ -106,6 +108,12 @@ void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t 
 	// reply times (same on both sides for symm. ranging)
 	_replyDelayTimeUS = DEFAULT_REPLY_DELAY_TIME;
 	//we set our timer delay
+	
+	DEFAULT_TIMER_DELAY = Default_Timer_Delay;
+	//default timer delay
+	// 80 defines Poll Delay - Duration 102ms
+	// 40 defines Poll Delay - Duration  62ms
+	// 25 defines Poll Delay - Duration  47ms
 	_timerDelay       = DEFAULT_TIMER_DELAY;
 	
 	
@@ -168,7 +176,8 @@ void DW1000RangingClass::generalStart() {
 }
 
 
-void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, const bool master, const uint32_t SYNC_Periode) {
+void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, 
+	const bool master, const uint32_t SYNC_Periode) {
 	
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
@@ -213,7 +222,9 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 	
 }
 
-void DW1000RangingClass::startAsTag(char address[], const byte mode[], const bool randomShortAddress, const uint32_t TimeSlotStart, const uint32_t TimeSlotEnd) {
+void DW1000RangingClass::startAsTag(char address[], const byte mode[], const bool randomShortAddress, const uint32_t TimeSlotStart, 
+	const uint32_t TimeSlotEnd) {
+	
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
 	//write the address on the DW1000 chip
@@ -399,10 +410,11 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 bool DW1000RangingClass::isMyTimeSlot() {
     // Check whether the current time is within the assigned time slot
     uint32_t currentTime = millis() - synchronizedTime;
-	if(currentTime >= myTimeSlotStart && currentTime + 50 < myTimeSlotEnd){
+	if(currentTime >= myTimeSlotStart && currentTime + (DEFAULT_TIMER_DELAY+22) < myTimeSlotEnd){ //
 		//Serial.print("\nCurrent Timeslot: " + String(currentTime));
     	return true;
 	}
+	vTaskDelay(pdMS_TO_TICKS(1));
 	return false;
 }
 
@@ -499,6 +511,7 @@ void DW1000RangingClass::loop() {
 		if(messageType == SYNC && _type == TAG ) {
 			// Process synchronization message
 			synchronizedTime = millis();
+			//Serial.print("\nNew received message: SYNC");
 		}
 
 		//we have just received a BLINK message from tag
@@ -670,8 +683,6 @@ void DW1000RangingClass::loop() {
 						// unexpected message, start over again
 						//not needed ?
 						return;
-						_expectedMsgId = POLL_ACK;
-						return;
 					}
 					if(messageType == POLL_ACK) {
 						DW1000.getReceiveTimestamp(myDistantDevice->timePollAckReceived);
@@ -769,10 +780,12 @@ void DW1000RangingClass::resetInactive() {
 
 void DW1000RangingClass::timerTick() {
 	if(_networkDevicesNumber > 0 && counterForBlink != 0) {
-		if(_type == TAG && isMyTimeSlot()) { 
-			_expectedMsgId = POLL_ACK;
-			//send a prodcast poll
-			transmitPoll(nullptr);
+		if(_type == TAG) { 
+			if(isMyTimeSlot()){
+				_expectedMsgId = POLL_ACK;
+				//send a prodcast poll
+				transmitPoll(nullptr);
+			}
 		}
 	}
 	else if(counterForBlink == 0) {
