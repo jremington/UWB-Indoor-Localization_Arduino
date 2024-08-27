@@ -122,13 +122,14 @@ void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t 
 }
 
 
-void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[]) {
+void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[], const byte channel) {
 	// general configuration
 	DW1000.newConfiguration();
 	DW1000.setDefaults();
 	DW1000.setDeviceAddress(deviceAddress);
 	DW1000.setNetworkId(networkId);
 	DW1000.enableMode(mode);
+	DW1000.setChannel(channel);
 	DW1000.commitConfiguration();
 	
 }
@@ -177,7 +178,7 @@ void DW1000RangingClass::generalStart() {
 
 
 void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, 
-	const bool master, const uint32_t SYNC_Periode) {
+	const bool master, const uint32_t SYNC_Periode, const byte channel) {
 	
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
@@ -203,8 +204,7 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 	//(device Address, network ID, frequency)
 	
 	uint16_t currShortAddr = _currentShortAddress[0]*256+_currentShortAddress[1];
-	DW1000Ranging.configureNetwork(currShortAddr, 0xDECA, mode);
-	
+	DW1000Ranging.configureNetwork(currShortAddr, 0xDECA, mode, channel);
 	//general start:
 	generalStart();
 	
@@ -223,7 +223,7 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 }
 
 void DW1000RangingClass::startAsTag(char address[], const byte mode[], const bool randomShortAddress, const uint32_t TimeSlotStart, 
-	const uint32_t TimeSlotEnd) {
+	const uint32_t TimeSlotEnd, const byte channel) {
 	
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
@@ -246,7 +246,7 @@ void DW1000RangingClass::startAsTag(char address[], const byte mode[], const boo
 	
 	//we configur the network for mac filtering
 	//(device Address, network ID, frequency)
-	DW1000Ranging.configureNetwork(_currentShortAddress[0]*256+_currentShortAddress[1], 0xDECA, mode);
+	DW1000Ranging.configureNetwork(_currentShortAddress[0]*256+_currentShortAddress[1], 0xDECA, mode, channel);
 	
 	generalStart();
 	//defined type as tag
@@ -410,7 +410,7 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 bool DW1000RangingClass::isMyTimeSlot() {
     // Check whether the current time is within the assigned time slot
     uint32_t currentTime = millis() - synchronizedTime;
-	if(currentTime >= myTimeSlotStart && currentTime + (DEFAULT_TIMER_DELAY+22) < myTimeSlotEnd){ //
+	if(currentTime >= myTimeSlotStart && currentTime + (DEFAULT_TIMER_DELAY+22) < myTimeSlotEnd){ 
 		//Serial.print("\nCurrent Timeslot: " + String(currentTime));
     	return true;
 	}
