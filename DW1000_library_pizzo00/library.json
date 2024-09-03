@@ -1,0 +1,16 @@
+{
+  "name": "DW1000",
+  "keywords": "wireless, communication",
+  "description": "A library that offers functionality to use Decawave's DW1000 chips.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jremington/UWB-Indoor-Localization_Arduino.git"
+  },
+  "version": "1.0",
+  "exclude": [
+    "adapterBoard",
+    "extras"
+  ],
+  "frameworks": "arduino",
+  "platforms": "*"
+}
