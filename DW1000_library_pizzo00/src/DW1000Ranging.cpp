@@ -67,7 +67,7 @@ void (*DW1000RangingClass::_handleNewDevice)(DW1000Device *);
 void (*DW1000RangingClass::_handleInactiveDevice)(DW1000Device *);
 void (*DW1000RangingClass::_handleRemovedDeviceMaxReached)(DW1000Device *);
 
-void DW1000RangingClass::init(BoardType type, uint16_t shortAddress, const char *wifiMacAddress, const byte mode[], uint8_t myRST, uint8_t mySS, uint8_t myIRQ)
+void DW1000RangingClass::init(BoardType type, uint16_t shortAddress, const char *wifiMacAddress, bool high_power, const byte mode[], uint8_t myRST, uint8_t mySS, uint8_t myIRQ)
 {
 	_networkDevicesNumber = 0;
 	_sentAck = false;
@@ -104,7 +104,7 @@ void DW1000RangingClass::init(BoardType type, uint16_t shortAddress, const char 
 	configureNetwork(shortAddress, 0xDECA, mode);
 
 	// general start
-	generalStart();
+	generalStart(high_power);
 
 	// defined type
 	_type = type;
@@ -148,7 +148,7 @@ void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t netwo
 	DW1000.commitConfiguration();
 }
 
-void DW1000RangingClass::generalStart()
+void DW1000RangingClass::generalStart(bool high_power)
 {
 	// attach callback for (successfully) sent and received messages
 	DW1000.attachSentHandler(handleSent);
@@ -178,8 +178,8 @@ void DW1000RangingClass::generalStart()
 	m_log::log_vrb(LOG_DW1000, "Device mode: %s", msg);
 	*/
 
-	// Vincent changes
-	DW1000.large_power_init();
+	if(high_power)
+		DW1000.high_power_init();
 
 	// anchor starts in receiving mode, awaiting a ranging poll message
 	receiver();

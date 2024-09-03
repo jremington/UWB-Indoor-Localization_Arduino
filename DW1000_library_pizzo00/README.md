@@ -14,11 +14,9 @@ Project state
 
 **Development:**
 
-Created by 
 Currently (2024) **under development**.
 
 **TODOs:**
-* Provide a flag for HighPower mode
 * Create a attachCustomPackageHandler for maintenance operation throught uwb (like changing the esp ip remotely)
 
 

@@ -314,7 +314,7 @@ public:
 
 	// Vincent changes
 	// For large power moudle
-	static void large_power_init();
+	static void high_power_init();
 	
 	/* ##### Operation mode selection ############################################ */
 	/** 

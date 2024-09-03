@@ -2358,8 +2358,8 @@ void DW1000Class::getPrettyBytes(byte cmd, uint16_t offset, char msgBuffer[], ui
 }
 
 // Vincent changes
-// For large power moudle
-void DW1000Class::large_power_init()
+// For high power module
+void DW1000Class::high_power_init()
 {
 	// uint32 reg;
 	// reg = dwt_read32bitreg(GPIO_CTRL_ID);
@@ -2386,14 +2386,14 @@ void DW1000Class::large_power_init()
 
 	// Power and measures in LOS
 	/*
-	reg[0] = reg[1] = reg[2] = reg[3] = 0b00011111; // 30.5db >90m (Max power)
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b11000001; //  0.5db  10m
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b10100000; //  2.5db  12m
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b10000000; //  5.0db  25m
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b01100000; //  7.5db  40m
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b01000000; // 10.0db  45m
+	reg[0] = reg[1] = reg[2] = reg[3] = 0b00000000; // 15.0db
+	reg[0] = reg[1] = reg[2] = reg[3] = 0b00011111; // 30.5db >90m (Max power)
 	*/
-	// reg[0] = reg[1] = reg[2] = reg[3] = 0b00000000; //15.0db
 	reg[0] = reg[1] = reg[2] = reg[3] = 0b00011111;
 	writeBytes(TX_POWER, 0, reg, 4);
 }
