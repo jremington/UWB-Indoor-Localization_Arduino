@@ -16,6 +16,17 @@ Project state
 
 Currently (2024) **under development**.
 
+**Improvements:**
+
+- Added informations about the known anchors on blink message so only the unkown will respond
+- After a poll an anchor that is not on the poll can respond with a ranging_init on some free time slots (to avoid waiting until a blink)
+- I have increased (by reducing the transmitted data) the maximum number of anchor per tag to 6, the tag can still "know" more than 6 anchor and query only the 6 with the best signal
+- The system is working with multiple tags, the limit is the occupation of the channel so the number of tags supported depends on the update frequency
+- Tag would not wait for the last poll ack to arrive before sending the range anymore (so if the last anchor is offline you had to wait for it to be remove for inactivity). Now it wait for the last one or use a timeout, so the range is always sent.
+- Range report to the tag can be opt-out using a flag
+- Removed long address
+- Add a minimal log library instead of Serial.print
+
 **TODOs:**
 * Create a attachCustomPackageHandler for maintenance operation throught uwb (like changing the esp ip remotely)
 
