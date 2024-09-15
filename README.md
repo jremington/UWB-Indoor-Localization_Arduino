@@ -2,6 +2,10 @@
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
+UPDATE 9/14/2024:  
+1. New version of Trojer DW1000 library uploaded, with errors for > 5 tags+anchors corrected, but not fully tested by me.
+2. New algorithm for N>4 anchors uploaded, working for simulations 
+
 WARNING 7/10/2023: There appears to be a problem with Thomas Trojer's DW1000 library that limits the number of anchors to four.
 
 UPDATE 5/3/2022: First comprehensive range tests done (line of sight, antennas parallel), and there is a clear winner! Choose the initialization option below for range up to 33 m. All other options lead to 5-10 m at best. Linking with the newly added "high power" library provides > 50 m range under ideal conditions, but battery life will be shortened.
