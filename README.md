@@ -4,7 +4,7 @@
 
 UPDATE 9/14/2024:  
 1. New version of Thomas Trojer's DW1000 library uploaded by Pizzolato Davide, reportedly with errors corrected for > 5 tags+anchors, but not yet tested by me.
-2. New algorithm for N>4 anchors uploaded, currently working for simulations (see folder trilateration_tests_C), now generalizing for implementing with ESP32-UWB boards. 
+2. New algorithm for N>4 anchors uploaded, currently working for simulations (see folder trilateration_tests_C), now working on implementation with ESP32-UWB boards. 
 
 WARNING 7/10/2023: There appears to be a problem with Thomas Trojer's DW1000 library that limits the number of anchors to four.
 
