@@ -760,23 +760,29 @@ void DW1000RangingClass::transmitInit() {
 	DW1000.setDefaults();
 }
 
-
-void DW1000RangingClass::transmit(byte datas[]) {
-	DW1000.setData(datas, LEN_DATA);
+void DW1000RangingClass::transmit(byte datas[], uint16_t len) {
+	DW1000.setData(datas, len);
 	DW1000.startTransmit();
 }
 
+void DW1000RangingClass::transmit(byte datas[], uint16_t len, DW1000Time time) {
+	DW1000.setDelay(time);
+	transmit(datas, len);
+}
+
+void DW1000RangingClass::transmit(byte datas[]) {
+	transmit(datas, LEN_DATA);
+}
 
 void DW1000RangingClass::transmit(byte datas[], DW1000Time time) {
 	DW1000.setDelay(time);
-	DW1000.setData(data, LEN_DATA);
-	DW1000.startTransmit();
+	transmit(datas, LEN_DATA);
 }
 
 void DW1000RangingClass::transmitBlink() {
 	transmitInit();
 	_globalMac.generateBlinkFrame(data, _currentAddress, _currentShortAddress);
-	transmit(data);
+	transmit(data, 12);
 }
 
 void DW1000RangingClass::transmitRangingInit(DW1000Device* myDistantDevice) {
@@ -818,6 +824,8 @@ void DW1000RangingClass::transmitPoll(DW1000Device* myDistantDevice) {
 		}
 		
 		copyShortAddress(_lastSentToShortAddress, shortBroadcast);
+
+		transmit(data, SHORT_MAC_LEN+2+4*_networkDevicesNumber);
 		
 	}
 	else {
@@ -832,9 +840,11 @@ void DW1000RangingClass::transmitPoll(DW1000Device* myDistantDevice) {
 		memcpy(data+SHORT_MAC_LEN+2, &replyTime, sizeof(uint16_t)); // todo is code correct?
 		
 		copyShortAddress(_lastSentToShortAddress, myDistantDevice->getByteShortAddress());
+
+		transmit(data, SHORT_MAC_LEN+2+4);
+
 	}
 	
-	transmit(data);
 }
 
 
@@ -845,7 +855,7 @@ void DW1000RangingClass::transmitPollAck(DW1000Device* myDistantDevice) {
 	// delay the same amount as ranging tag
 	DW1000Time deltaTime = DW1000Time(_replyDelayTimeUS, DW1000Time::MICROSECONDS);
 	copyShortAddress(_lastSentToShortAddress, myDistantDevice->getByteShortAddress());
-	transmit(data, deltaTime);
+	transmit(data, SHORT_MAC_LEN+1, deltaTime);
 }
 
 void DW1000RangingClass::transmitRange(DW1000Device* myDistantDevice) {
@@ -881,6 +891,8 @@ void DW1000RangingClass::transmitRange(DW1000Device* myDistantDevice) {
 		}
 		
 		copyShortAddress(_lastSentToShortAddress, shortBroadcast);
+
+		transmit(data, SHORT_MAC_LEN+2+17*_networkDevicesNumber);
 		
 	}
 	else {
@@ -894,10 +906,10 @@ void DW1000RangingClass::transmitRange(DW1000Device* myDistantDevice) {
 		myDistantDevice->timePollAckReceived.getTimestamp(data+6+SHORT_MAC_LEN);
 		myDistantDevice->timeRangeSent.getTimestamp(data+11+SHORT_MAC_LEN);
 		copyShortAddress(_lastSentToShortAddress, myDistantDevice->getByteShortAddress());
+
+		transmit(data, SHORT_MAC_LEN+2+17);
 	}
-	
-	
-	transmit(data);
+
 }
 
 
@@ -912,7 +924,7 @@ void DW1000RangingClass::transmitRangeReport(DW1000Device* myDistantDevice) {
 	memcpy(data+1+SHORT_MAC_LEN, &curRange, 4);
 	memcpy(data+5+SHORT_MAC_LEN, &curRXPower, 4);
 	copyShortAddress(_lastSentToShortAddress, myDistantDevice->getByteShortAddress());
-	transmit(data, DW1000Time(_replyDelayTimeUS, DW1000Time::MICROSECONDS));
+	transmit(data, SHORT_MAC_LEN+9, DW1000Time(_replyDelayTimeUS, DW1000Time::MICROSECONDS));
 }
 
 void DW1000RangingClass::transmitRangeFailed(DW1000Device* myDistantDevice) {
@@ -921,7 +933,7 @@ void DW1000RangingClass::transmitRangeFailed(DW1000Device* myDistantDevice) {
 	data[SHORT_MAC_LEN] = RANGE_FAILED;
 	
 	copyShortAddress(_lastSentToShortAddress, myDistantDevice->getByteShortAddress());
-	transmit(data);
+	transmit(data, SHORT_MAC_LEN+1);
 }
 
 void DW1000RangingClass::receiver() {
