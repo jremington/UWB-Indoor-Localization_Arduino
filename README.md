@@ -3,7 +3,7 @@
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 
 UPDATE 10/13/2024:  
-1. A new version of Thomas Trojer's DW1000 library uploaded by Pizzolato Davide, reportedly with errors corrected for > 5 tags+anchors, but it does not work for me using the original UWB boards from MakerFabs. See issue #22. If anyone has been able to successfully obtain ranges using this library, please contact me, or add comments to the issue thread.
+1. A new version of Thomas Trojer's DW1000 library uploaded by Pizzolato Davide, reportedly with errors corrected for > 5 tags+anchors, but it does not work for me using the original ESP32-UWB boards from MakerFabs. See issue #22. If anyone has been able to successfully obtain ranges using this library, please contact me, or add comments to the issue thread.
   
 2. New algorithm for N>4 anchors uploaded, currently working for simulations (see folder trilateration_tests_C), now working on implementation with ESP32-UWB boards. 
 
