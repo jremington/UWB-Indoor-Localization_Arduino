@@ -5,7 +5,7 @@
 UPDATE 10/13/2024:  
 1. A new version of Thomas Trojer's DW1000 library uploaded by Pizzolato Davide, reportedly with errors corrected for > 5 tags+anchors. Many changes were made to the library. Unfortunately I have not been successful to obtain ranging information from the original ESP32-UWB boards by MakerFabs. See issue #22. If anyone has successfully obtained ranges using this library, please contact me, or add comments to the issue thread.
   
-2. New algorithm for N>4 anchors uploaded, currently working for simulations (see folder trilateration_tests_C), now working on implementation with ESP32-UWB boards. 
+2. New 3D positioning code for N>4 anchors uploaded, currently working for simulations (see folder trilateration_tests_C), now working on implementation with ESP32-UWB boards. 
 
 WARNING 7/10/2023: There appears to be a problem with Thomas Trojer's DW1000 library that limits the number of anchors to four.
 
