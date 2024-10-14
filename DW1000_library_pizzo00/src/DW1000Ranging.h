@@ -82,6 +82,7 @@ class DW1000RangingClass
 public:
 	// Initialization
 	static void init(BoardType type, uint16_t shortAddress, const char *wifiMacAddress, bool high_power, const byte mode[], uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = DEFAULT_SPI_IRQ_PIN);
+	static void init(BoardType type, const uint8_t *wifiMacAddress, uint16_t shortAddress, bool high_power, const byte mode[], uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = DEFAULT_SPI_IRQ_PIN);
 
 	static void loop();
 

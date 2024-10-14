@@ -69,6 +69,13 @@ void (*DW1000RangingClass::_handleRemovedDeviceMaxReached)(DW1000Device *);
 
 void DW1000RangingClass::init(BoardType type, uint16_t shortAddress, const char *wifiMacAddress, bool high_power, const byte mode[], uint8_t myRST, uint8_t mySS, uint8_t myIRQ)
 {
+	uint8_t byteWifiMacAddress[6] = {0};
+	DW1000.convertToByte(wifiMacAddress, byteWifiMacAddress, 6);
+	init(type, byteWifiMacAddress, shortAddress, high_power, mode, myRST, mySS, myIRQ);
+}
+
+void DW1000RangingClass::init(BoardType type, const uint8_t *wifiMacAddress, uint16_t shortAddress, bool high_power, const byte mode[], uint8_t myRST, uint8_t mySS, uint8_t myIRQ)
+{
 	_networkDevicesNumber = 0;
 	_sentAck = false;
 	_receivedAck = false;
@@ -90,7 +97,13 @@ void DW1000RangingClass::init(BoardType type, uint16_t shortAddress, const char 
 
 	// convert the address
 	DW1000.convertToByte(shortAddress, _ownLongAddress);
-	DW1000.convertToByte(wifiMacAddress, _ownLongAddress + 2, 6);
+	// DW1000.convertToByte(wifiMacAddress, _ownLongAddress + 2, 6);
+	_ownLongAddress[2] = wifiMacAddress[0];
+	_ownLongAddress[3] = wifiMacAddress[1];
+	_ownLongAddress[4] = wifiMacAddress[2];
+	_ownLongAddress[5] = wifiMacAddress[3];
+	_ownLongAddress[6] = wifiMacAddress[4];
+	_ownLongAddress[7] = wifiMacAddress[5];
 
 	// we use first two bytes in address for short address
 	_ownShortAddress[0] = _ownLongAddress[0];
@@ -208,7 +221,7 @@ boolean DW1000RangingClass::addNetworkDevices(DW1000Device *device)
 	device->setRange(0);
 	if (_networkDevicesNumber < MAX_DEVICES)
 	{
-		memcpy(&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));
+		memcpy((void *)&_networkDevices[_networkDevicesNumber], device, sizeof(DW1000Device));
 		_networkDevices[_networkDevicesNumber].setIndex(_networkDevicesNumber);
 		_networkDevicesNumber++;
 	}
@@ -219,7 +232,7 @@ boolean DW1000RangingClass::addNetworkDevices(DW1000Device *device)
 		{
 			(*_handleRemovedDeviceMaxReached)(&_networkDevices[worstQuality]);
 		}
-		memcpy(&_networkDevices[worstQuality], device, sizeof(DW1000Device));
+		memcpy((void *)&_networkDevices[worstQuality], device, sizeof(DW1000Device));
 		_networkDevices[worstQuality].setIndex(worstQuality);
 	}
 	return true;
@@ -230,7 +243,7 @@ void DW1000RangingClass::removeNetworkDevices(uint8_t index)
 	if (index != _networkDevicesNumber - 1) // if we do not delete the last element
 	{
 		// we replace the element we want to delete with the last one
-		memcpy(&_networkDevices[index], &_networkDevices[_networkDevicesNumber - 1], sizeof(DW1000Device));
+		memcpy((void *)&_networkDevices[index], &_networkDevices[_networkDevicesNumber - 1], sizeof(DW1000Device));
 		_networkDevices[index].setIndex(index);
 	}
 	_networkDevicesNumber--;

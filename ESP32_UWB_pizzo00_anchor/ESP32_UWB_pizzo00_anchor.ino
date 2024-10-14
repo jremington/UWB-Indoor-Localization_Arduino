@@ -33,6 +33,11 @@ const uint8_t PIN_RST = 27; // reset pin
 const uint8_t PIN_IRQ = 34; // irq pin
 const uint8_t PIN_SS = 4;   // spi select pin
 
+// NOTE: Any change on this parameters will affect the transmission time of the packets
+// So if you change this parameters you should also change the response times on the DW1000 library 
+// (actual response times are based on experience made with these parameters)
+static constexpr byte MY_MODE[] = {DW1000.TRX_RATE_6800KBPS, DW1000.TX_PULSE_FREQ_16MHZ, DW1000.TX_PREAMBLE_LEN_64};
+
 void setup()
 {
   Serial.begin(115200);
@@ -45,7 +50,7 @@ void setup()
 
   //init the configuration
   SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
-  DW1000Ranging.init(BoardType::ANCHOR, shortAddress, macAddress, false, DW1000.MODE_LONGDATA_RANGE_LOWPOWER, PIN_RST, PIN_SS, PIN_IRQ);
+  DW1000Ranging.init(BoardType::ANCHOR, shortAddress, macAddress, false, MY_MODE, PIN_RST, PIN_SS, PIN_IRQ);
 
   // set antenna delay for anchors only. Tag is default (16384)
   DW1000.setAntennaDelay(Adelay);
