@@ -43,6 +43,12 @@
 
 class DW1000Class {
 public:
+	//interupt
+	static TaskHandle_t xHandleUwbInterrupt;
+	static volatile bool interruptOccurred;
+	static void processInterrupt(void *pvParameter);
+	
+	
 	/* ##### Init ################################################################ */
 	/** 
 	Initiates and starts a sessions with one or more DW1000. If rst is not set or value 0xff, a soft resets (i.e. command
@@ -473,7 +479,7 @@ public:
 	static boolean _debounceClockEnabled;
 
 	/* Arduino interrupt handler */
-	static void handleInterrupt();
+	static void IRAM_ATTR handleInterrupt();
 	
 	/* Allow MAC frame filtering . */
 	// TODO auto-acknowledge

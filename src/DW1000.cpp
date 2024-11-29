@@ -24,6 +24,9 @@
 
 DW1000Class DW1000;
 
+TaskHandle_t DW1000Class::xHandleUwbInterrupt;
+volatile bool DW1000Class::interruptOccurred = false;
+
 /* ###########################################################################
  * #### Static member variables ##############################################
  * ######################################################################### */
@@ -165,23 +168,25 @@ void DW1000Class::reselect(uint8_t ss) {
 }
 
 void DW1000Class::begin(uint8_t irq, uint8_t rst) {
-	// generous initial init/wake-up-idle delay
+    // Generous initial init/wake-up-idle delay
+    vTaskDelay(pdMS_TO_TICKS(5));
+
+    // Configure the IRQ pin as INPUT
+    pinMode(irq, INPUT);
+
+    // Start SPI
+    SPI.begin();
+
+    // Pin and basic member setup
+    _rst = rst;
+    _irq = irq;
+    _deviceMode = IDLE_MODE;
+
+    // Attach interrupt for ESP32
+    attachInterrupt(digitalPinToInterrupt(_irq), DW1000Class::handleInterrupt, RISING);
 	vTaskDelay(pdMS_TO_TICKS(5));
-	// Configure the IRQ pin as INPUT. Required for correct interrupt setting for ESP8266
-    	pinMode(irq, INPUT);
-	// start SPI
-	SPI.begin();
-//#ifndef ESP8266
-//	SPI.usingInterrupt(digitalPinToInterrupt(irq)); // not every board support this, e.g. ESP8266
-//#endif
-	// pin and basic member setup
-	_rst        = rst;
-	_irq        = irq;
-	_deviceMode = IDLE_MODE;
-	// attach interrupt
-	//attachInterrupt(_irq, DW1000Class::handleInterrupt, CHANGE); // todo interrupt for ESP8266
-	// TODO throw error if pin is not a interrupt pin
-	attachInterrupt(digitalPinToInterrupt(_irq), DW1000Class::handleInterrupt, RISING); // todo interrupt for ESP8266
+	xTaskCreate(&processInterrupt, "UWB-Interrupt", 4*1024, NULL, 2, &xHandleUwbInterrupt);
+
 }
 
 void DW1000Class::manageLDE() {
@@ -294,12 +299,12 @@ void DW1000Class::deepSleep() {
 }
 
 void DW1000Class::spiWakeup(){
-        digitalWrite(_ss, LOW);
-        vTaskDelay(pdMS_TO_TICKS(2));
-        digitalWrite(_ss, HIGH);
-        if (_debounceClockEnabled){
-                DW1000Class::enableDebounceClock();
-        }
+	digitalWrite(_ss, LOW);
+	vTaskDelay(pdMS_TO_TICKS(2));
+	digitalWrite(_ss, HIGH);
+	if (_debounceClockEnabled){
+			DW1000Class::enableDebounceClock();
+	}
 }
 
 
@@ -712,44 +717,57 @@ void DW1000Class::tune() {
  * ######################################################################### */
 
 void DW1000Class::handleInterrupt() {
-	// read current status and handle via callbacks
-	readSystemEventStatusRegister();
-	if(isClockProblem() /* TODO and others */ && _handleError != 0) {
-		(*_handleError)();
-	}
-	if(isTransmitDone() && _handleSent != 0) {
-		(*_handleSent)();
-		clearTransmitStatus();
-	}
-	if(isReceiveTimestampAvailable() && _handleReceiveTimestampAvailable != 0) {
-		(*_handleReceiveTimestampAvailable)();
-		clearReceiveTimestampAvailableStatus();
-	}
-	if(isReceiveFailed() && _handleReceiveFailed != 0) {
-		(*_handleReceiveFailed)();
-		clearReceiveStatus();
-		if(_permanentReceive) {
-			newReceive();
-			startReceive();
-		}
-	} else if(isReceiveTimeout() && _handleReceiveTimeout != 0) {
-		(*_handleReceiveTimeout)();
-		clearReceiveStatus();
-		if(_permanentReceive) {
-			newReceive();
-			startReceive();
-		}
-	} else if(isReceiveDone() && _handleReceived != 0) {
-		(*_handleReceived)();
-		clearReceiveStatus();
-		if(_permanentReceive) {
-			newReceive();
-			startReceive();
-		}
-	}
-	// clear all status that is left unhandled
-	clearAllStatus();
+	interruptOccurred = true;
 }
+
+void DW1000Class::processInterrupt(void *pvParameter) {
+	for(;;){ 
+		if (interruptOccurred) {
+			interruptOccurred = false;
+			
+			// read current status and handle via callbacks
+			readSystemEventStatusRegister();
+			if(isClockProblem() /* TODO and others */ && _handleError != 0) {
+				(*_handleError)();
+			}
+			if(isTransmitDone() && _handleSent != 0) {
+				(*_handleSent)();
+				clearTransmitStatus();
+			}
+			if(isReceiveTimestampAvailable() && _handleReceiveTimestampAvailable != 0) {
+				(*_handleReceiveTimestampAvailable)();
+				clearReceiveTimestampAvailableStatus();
+			}
+			if(isReceiveFailed() && _handleReceiveFailed != 0) {
+				(*_handleReceiveFailed)();
+				clearReceiveStatus();
+				if(_permanentReceive) {
+					newReceive();
+					startReceive();
+				}
+			} else if(isReceiveTimeout() && _handleReceiveTimeout != 0) {
+				(*_handleReceiveTimeout)();
+				clearReceiveStatus();
+				if(_permanentReceive) {
+					newReceive();
+					startReceive();
+				}
+			} else if(isReceiveDone() && _handleReceived != 0) {
+				(*_handleReceived)();
+				clearReceiveStatus();
+				if(_permanentReceive) {
+					newReceive();
+					startReceive();
+				}
+			}
+			// clear all status that is left unhandled
+			clearAllStatus();
+		}
+		vTaskDelay(pdMS_TO_TICKS(1));
+	}  
+  	vTaskDelete(NULL);
+}
+
 
 /* ###########################################################################
  * #### Pretty printed device information ####################################

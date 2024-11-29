@@ -129,7 +129,7 @@ void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t netwo
 	DW1000.setDeviceAddress(deviceAddress);
 	DW1000.setNetworkId(networkId);
 	DW1000.enableMode(mode);
-	DW1000.setChannel(channel);
+	//DW1000.setChannel(channel);
 	DW1000.commitConfiguration();
 	
 }
@@ -414,7 +414,6 @@ bool DW1000RangingClass::isMyTimeSlot() {
 		//Serial.print("\nCurrent Timeslot: " + String(currentTime));
     	return true;
 	}
-	vTaskDelay(pdMS_TO_TICKS(1));
 	return false;
 }
 
@@ -577,7 +576,7 @@ void DW1000RangingClass::loop() {
 				if(messageType == POLL) {
 					//we receive a POLL which is a broacast message
 					//we need to grab info about it
-					int16_t numberDevices = 0;
+					uint16_t numberDevices = 0;
 					memcpy(&numberDevices, data+SHORT_MAC_LEN+1, 1);
 					
 					for(uint16_t i = 0; i < numberDevices; i++) {
@@ -607,8 +606,6 @@ void DW1000RangingClass::loop() {
 						}
 						
 					}
-					
-					
 				}
 				else if(messageType == RANGE) {
 					//we receive a RANGE which is a broacast message
@@ -680,8 +677,7 @@ void DW1000RangingClass::loop() {
 					// get message and parse
 					
 					if(messageType != _expectedMsgId) {
-						// unexpected message, start over again
-						//not needed ?
+						_expectedMsgId = POLL_ACK;
 						return;
 					}
 					if(messageType == POLL_ACK) {
