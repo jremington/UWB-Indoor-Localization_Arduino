@@ -42,7 +42,6 @@
 #define RANGE_FAILED 255
 #define BLINK 4
 #define RANGING_INIT 5
-
 #define SYNC 6
 
 #define LEN_DATA 90
@@ -94,9 +93,7 @@ public:
 	
 	//getters
 	static byte* getCurrentAddress() { return _currentAddress; };
-	
 	static byte* getCurrentShortAddress() { return _currentShortAddress; };
-	
 	static uint8_t getNetworkDevicesNumber() { return _networkDevicesNumber; };
 	
 	//ranging functions
@@ -108,14 +105,9 @@ public:
 	
 	//Handlers:
 	static void attachNewRange(void (* handleNewRange)(void)) { _handleNewRange = handleNewRange; };
-	
 	static void attachBlinkDevice(void (* handleBlinkDevice)(DW1000Device*)) { _handleBlinkDevice = handleBlinkDevice; };
-	
 	static void attachNewDevice(void (* handleNewDevice)(DW1000Device*)) { _handleNewDevice = handleNewDevice; };
-	
 	static void attachInactiveDevice(void (* handleInactiveDevice)(DW1000Device*)) { _handleInactiveDevice = handleInactiveDevice; };
-	
-	
 	
 	static DW1000Device* getDistantDevice();
 	static DW1000Device* searchDistantDevice(byte shortAddress[]);
@@ -185,7 +177,6 @@ private:
 	//17 bytes in SRAM
 	static char  _bias_PRF_64[17]; // TODO remove or use
 	
-	
 	//methods
 	static void handleSent();
 	static void handleReceived();
@@ -219,11 +210,25 @@ private:
 	
 	//methods for range computation
 	static void computeRangeAsymmetric(DW1000Device* myDistantDevice, DW1000Time* myTOF);
-	
 	static void timerTick();
 	
 	//Utils
 	static float filterValue(float value, float previousValue, uint16_t numberOfElements);
+
+	static void handleSentAck();
+	static void handleSentAckAnchor(int messageType);
+	static void handleSentAckTag(int messageType);
+	static void updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, int msgType);
+	static void handleReceivedMessage();
+	static void handleSync();
+	static void handleBlink();
+	static void handleRangingInit();
+	static void processShortMacMessage(int messageType);
+	static void processAnchorMessage(int messageType, DW1000Device* myDistantDevice);
+	static void handlePoll(DW1000Device* myDistantDevice);
+	static void handleRange(DW1000Device* myDistantDevice);
+	static void processTagMessage(int messageType, DW1000Device* myDistantDevice);
+
 };
 
 extern DW1000RangingClass DW1000Ranging;
