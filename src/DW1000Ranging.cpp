@@ -172,7 +172,7 @@ void DW1000RangingClass::generalStart() {
 	// anchor starts in receiving mode, awaiting a ranging poll message
 	receiver();
 	// for first time ranging frequency computation
-	_rangingCountPeriod = millis();
+	_rangingCountPeriod = (esp_timer_get_time()/1000);
 }
 
 
@@ -250,7 +250,7 @@ void DW1000RangingClass::startAsTag(char address[], const byte mode[], const boo
 	generalStart();
 	//defined type as tag
 	_type = TAG;
-	lastSyncTime = millis();
+	lastSyncTime = (esp_timer_get_time()/1000);
 	myTimeSlotStart = TimeSlotStart; 
 	myTimeSlotEnd   = TimeSlotEnd;
 	Serial.print("\n### TAG ###");
@@ -368,7 +368,7 @@ DW1000Device* DW1000RangingClass::getDistantDevice() {
 void DW1000RangingClass::checkForReset() {
 	if(!_sentAck && !_receivedAck) {
 		// check if inactive
-		if(millis() - _lastActivity > _resetPeriod) {
+		if((esp_timer_get_time()/1000) - _lastActivity > _resetPeriod) {
 			resetInactive();
 		}
 		return; // TODO cc
@@ -408,7 +408,7 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 
 bool DW1000RangingClass::isMyTimeSlot() {
     // Check whether the current time is within the assigned time slot
-    uint32_t currentTime = millis() - synchronizedTime;
+    uint32_t currentTime = (esp_timer_get_time()/1000) - synchronizedTime;
 	if(currentTime >= myTimeSlotStart && currentTime + (DEFAULT_TIMER_DELAY+22) < myTimeSlotEnd){ 
 		//Serial.print("\nCurrent Timeslot: " + String(currentTime));
     	return true;
@@ -420,18 +420,18 @@ void DW1000RangingClass::loop() {
   checkForReset();
 
   // Periodically send a sync signal if configured as master
-  if (_master == MASTER && (millis() - lastSyncTime >= SYNC_INTERVAL)) {
+  if (_master == MASTER && ((esp_timer_get_time()/1000) - lastSyncTime >= SYNC_INTERVAL)) {
     transmitSync();
     if (DEBUG) { // Serial prints only in debug mode
-      Serial.print("\nSync sent: " + String(millis() - lastSyncTime) + " ms since last sync.");
+      Serial.print("\nSync sent: " + String((esp_timer_get_time()/1000) - lastSyncTime) + " ms since last sync.");
     }
-    lastSyncTime = millis();
+    lastSyncTime = (esp_timer_get_time()/1000);
   }
 
   // Check if the timer has expired
-  if (millis() - timer > _timerDelay) {
+  if ((esp_timer_get_time()/1000) - timer > _timerDelay) {
     timerTick();
-    timer = millis(); // Reset timer
+    timer = (esp_timer_get_time()/1000); // Reset timer
   }
 
   handleSentAck();  // Handle the sending of ACKs
@@ -544,7 +544,7 @@ void DW1000RangingClass::handleReceivedMessage() {
 }
 
 void DW1000RangingClass::handleSync() {
-  synchronizedTime = millis();
+  synchronizedTime = (esp_timer_get_time()/1000);
   // Serial.print("\nNew received message: SYNC");
 }
 
@@ -670,8 +670,8 @@ void DW1000RangingClass::handleRange(DW1000Device* myDistantDevice) {
         myDistantDevice->setQuality(DW1000.getReceiveQuality());
 
         transmitRangeReport(myDistantDevice);
-        Serial.print("\nNew Range - round trip time: " + String(millis() - roundTripTime));
-        roundTripTime = millis();
+        Serial.print("\nNew Range - round trip time: " + String((esp_timer_get_time()/1000) - roundTripTime));
+        roundTripTime = (esp_timer_get_time()/1000);
         _lastDistantDevice = myDistantDevice->getIndex();
         if (_handleNewRange != 0) {
           (*_handleNewRange)();
@@ -759,7 +759,7 @@ void DW1000RangingClass::handleReceived() {
 
 void DW1000RangingClass::noteActivity() {
 	// update activity timestamp, so that we do not reach "resetPeriod"
-	_lastActivity = millis();
+	_lastActivity = (esp_timer_get_time()/1000);
 }
 
 void DW1000RangingClass::resetInactive() {
