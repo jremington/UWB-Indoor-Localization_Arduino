@@ -388,7 +388,7 @@ void DW1000RangingClass::checkForInactiveDevices() {
 }
 
 // TODO check return type
-int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
+MessageType DW1000RangingClass::detectMessageType(byte datas[]) {
 	if(datas[0] == FC_1_BLINK) {
 		return BLINK;
 	}
@@ -397,13 +397,21 @@ int16_t DW1000RangingClass::detectMessageType(byte datas[]) {
 	}
 	else if(datas[0] == FC_1 && datas[1] == FC_2) {
 		//we have a long MAC frame message (ranging init)
-		return datas[LONG_MAC_LEN];
+		return RANGING_INIT;
 	}
 	else if(datas[0] == FC_1 && datas[1] == FC_2_SHORT) {
 		//we have a short mac frame message (poll, range, range report, etc..)
-		return datas[SHORT_MAC_LEN];
+		int messageId = datas[SHORT_MAC_LEN];
+		switch (messageId) {
+			case 0: return POLL;
+			case 1: return POLL_ACK;
+			case 2: return RANGE;
+			case 3: return RANGE_REPORT;
+			case 255: return RANGE_FAILED;
+			default: return ERROR;
+		}
 	}
-	return -1; //fix flagged return error (sjr)
+	return ERROR; 
 }
 
 bool DW1000RangingClass::isMyTimeSlot() {
@@ -449,7 +457,7 @@ void DW1000RangingClass::handleSentAck() {
   _sentAck = false;
 
   // Determine the message type of the ACK sent
-  int messageType = detectMessageType(data);
+  MessageType messageType = detectMessageType(data);
 
   // If the message type is not relevant for the ranging logs, exit the function
   if (messageType != POLL_ACK && messageType != POLL && messageType != RANGE) {
@@ -468,7 +476,7 @@ void DW1000RangingClass::handleSentAck() {
 }
 
 
-void DW1000RangingClass::handleSentAckAnchor(int messageType) {
+void DW1000RangingClass::handleSentAckAnchor(MessageType messageType) {
   if (messageType == POLL_ACK) {
     DW1000Device* myDistantDevice = searchDistantDevice(_lastSentToShortAddress);
     if (myDistantDevice) {
@@ -477,7 +485,7 @@ void DW1000RangingClass::handleSentAckAnchor(int messageType) {
   }
 }
 
-void DW1000RangingClass::handleSentAckTag(int messageType) {
+void DW1000RangingClass::handleSentAckTag(MessageType messageType) {
   if (messageType == POLL) {
 	DW1000Time timePollSent;
     DW1000.getTransmitTimestamp(timePollSent);
@@ -489,21 +497,21 @@ void DW1000RangingClass::handleSentAckTag(int messageType) {
   }
 }
 
-void DW1000RangingClass::updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, int msgType) {
+void DW1000RangingClass::updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, MessageType messageType) {
   if (shortAddress[0] == 0xFF && shortAddress[1] == 0xFF) {
     for (uint16_t i = 0; i < _networkDevicesNumber; i++) {
-      if (msgType == POLL) {
+      if (messageType == POLL) {
         _networkDevices[i].timePollSent = time;
-      } else if (msgType == RANGE) {
+      } else if (messageType == RANGE) {
         _networkDevices[i].timeRangeSent = time;
       }
     }
   } else {
     DW1000Device* myDistantDevice = searchDistantDevice(shortAddress);
     if (myDistantDevice) {
-      if (msgType == POLL) {
+      if (messageType == POLL) {
         myDistantDevice->timePollSent = time;
-      } else if (msgType == RANGE) {
+      } else if (messageType == RANGE) {
         myDistantDevice->timeRangeSent = time;
       }
     }
@@ -519,7 +527,7 @@ void DW1000RangingClass::handleReceivedMessage() {
 
   DW1000.getData(data, LEN_DATA);
 
-  int messageType = detectMessageType(data);
+  MessageType messageType = detectMessageType(data);
 
   switch (messageType) {
     case SYNC:
@@ -578,7 +586,7 @@ void DW1000RangingClass::handleRangingInit() {
   noteActivity();
 }
 
-void DW1000RangingClass::processShortMacMessage(int messageType) {
+void DW1000RangingClass::processShortMacMessage(MessageType messageType) {
   byte address[2];
   _globalMac.decodeShortMACFrame(data, address);
 
@@ -598,7 +606,7 @@ void DW1000RangingClass::processShortMacMessage(int messageType) {
   }
 }
 
-void DW1000RangingClass::processAnchorMessage(int messageType, DW1000Device* myDistantDevice) {
+void DW1000RangingClass::processAnchorMessage(MessageType messageType, DW1000Device* myDistantDevice) {
   if (messageType != _expectedMsgId) {
     _protocolFailed = true;
   }
@@ -685,7 +693,7 @@ void DW1000RangingClass::handleRange(DW1000Device* myDistantDevice) {
   }
 }
 
-void DW1000RangingClass::processTagMessage(int messageType, DW1000Device* myDistantDevice) {
+void DW1000RangingClass::processTagMessage(MessageType messageType, DW1000Device* myDistantDevice) {
   if (messageType != _expectedMsgId) {
     _expectedMsgId = POLL_ACK;
     return;

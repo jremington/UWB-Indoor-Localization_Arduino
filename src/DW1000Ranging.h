@@ -34,15 +34,17 @@
 #include "DW1000Device.h" 
 #include "DW1000Mac.h"
 
-// messages used in the ranging protocol
-#define POLL 0
-#define POLL_ACK 1
-#define RANGE 2
-#define RANGE_REPORT 3
-#define RANGE_FAILED 255
-#define BLINK 4
-#define RANGING_INIT 5
-#define SYNC 6
+enum MessageType {
+  ERROR = -1,
+  POLL = 0,
+  POLL_ACK = 1,
+  RANGE = 2,
+  RANGE_REPORT = 3,
+  RANGE_FAILED = 255,
+  BLINK = 4,
+  RANGING_INIT = 5,
+  SYNC = 6
+};
 
 #define LEN_DATA 90
 
@@ -60,10 +62,15 @@
 //in us
 #define DEFAULT_REPLY_DELAY_TIME 7000 //7000
 
-//sketch type (anchor or tag)
-#define TAG 0
-#define ANCHOR 1
-#define MASTER 1
+enum sketchType {
+  TAG = 0,
+  ANCHOR = 1
+};
+
+enum MasterStatus {
+  SLAVE = 0, 
+  MASTER = 1
+};
 
 //debug mode
 #ifndef DEBUG
@@ -97,7 +104,7 @@ public:
 	static uint8_t getNetworkDevicesNumber() { return _networkDevicesNumber; };
 	
 	//ranging functions
-	static int16_t detectMessageType(byte datas[]); // TODO check return type
+	static MessageType detectMessageType(byte datas[]); // TODO check return type
 	static void loop();
 	static void useRangeFilter(boolean enabled);
 	// Used for the smoothing algorithm (Exponential Moving Average). newValue must be >= 2. Default 15.
@@ -216,18 +223,18 @@ private:
 	static float filterValue(float value, float previousValue, uint16_t numberOfElements);
 
 	static void handleSentAck();
-	static void handleSentAckAnchor(int messageType);
-	static void handleSentAckTag(int messageType);
-	static void updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, int msgType);
+	static void handleSentAckAnchor(MessageType messageType);
+	static void handleSentAckTag(MessageType messageType);
+	static void updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, MessageType messageType);
 	static void handleReceivedMessage();
 	static void handleSync();
 	static void handleBlink();
 	static void handleRangingInit();
-	static void processShortMacMessage(int messageType);
-	static void processAnchorMessage(int messageType, DW1000Device* myDistantDevice);
+	static void processShortMacMessage(MessageType messageType);
+	static void processAnchorMessage(MessageType messageType, DW1000Device* myDistantDevice);
 	static void handlePoll(DW1000Device* myDistantDevice);
 	static void handleRange(DW1000Device* myDistantDevice);
-	static void processTagMessage(int messageType, DW1000Device* myDistantDevice);
+	static void processTagMessage(MessageType messageType, DW1000Device* myDistantDevice);
 
 };
 
