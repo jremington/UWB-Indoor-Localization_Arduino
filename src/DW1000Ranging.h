@@ -104,7 +104,7 @@ public:
 	static uint8_t getNetworkDevicesNumber() { return _networkDevicesNumber; };
 	
 	//ranging functions
-	static MessageType detectMessageType(byte datas[]); // TODO check return type
+	static MessageType detectMessageType(const byte datas[]); // TODO check return type
 	static void loop();
 	static void useRangeFilter(boolean enabled);
 	// Used for the smoothing algorithm (Exponential Moving Average). newValue must be >= 2. Default 15.
@@ -117,7 +117,7 @@ public:
 	static void attachInactiveDevice(void (* handleInactiveDevice)(DW1000Device*)) { _handleInactiveDevice = handleInactiveDevice; };
 	
 	static DW1000Device* getDistantDevice();
-	static DW1000Device* searchDistantDevice(byte shortAddress[]);
+	static DW1000Device* searchDistantDevice(const byte shortAddress[]);
 	
 	//FOR DEBUGGING
 	static void visualizeDatas(byte datas[]);
@@ -143,6 +143,8 @@ private:
 	static uint32_t myTimeSlotEnd; 
 	static uint32_t synchronizedTime;
 	static uint32_t SYNC_INTERVAL;
+
+	static uint32_t MICROS_TO_MILLIS;
 	
 	//Handlers:
 	static void (* _handleNewRange)(void);
@@ -235,6 +237,9 @@ private:
 	static void handlePoll(DW1000Device* myDistantDevice);
 	static void handleRange(DW1000Device* myDistantDevice);
 	static void processTagMessage(MessageType messageType, DW1000Device* myDistantDevice);
+	static void handleRangeReport(DW1000Device* device);
+	static void handlePollAck(DW1000Device* device);
+
 
 };
 
