@@ -69,7 +69,9 @@ public:
 	//2 bytes for Desination Address and 2 bytes for Source Address
 	//total=9 bytes
 	void generateShortMACFrame(byte frame[], byte sourceShortAddress[], byte destinationShortAddress[]);
-	
+	void generateMultiShortMACFrame(byte frame[], byte sourceShortAddress[], byte destShortAddress1[], byte destShortAddress2[]);
+
+
 	//the long frame for Ranging init
 	//8 bytes for Destination Address and 2 bytes for Source Address
 	//total of
@@ -78,6 +80,8 @@ public:
 	//in order to decode the frame and save source Address!
 	void decodeBlinkFrame(byte frame[], byte address[], byte shortAddress[]);
 	void decodeShortMACFrame(byte frame[], byte address[]);
+	void decodeMultiShortMACFrame(byte data[], byte address1[], byte address2[]);
+
 	void decodeLongMACFrame(byte frame[], byte address[]);
 	
 	void incrementSeqNumber();

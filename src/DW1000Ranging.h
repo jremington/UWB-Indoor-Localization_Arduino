@@ -72,6 +72,14 @@ enum MasterStatus {
   MASTER = 1
 };
 
+struct DeviceIndices {
+    uint8_t startIndex;
+    uint8_t endIndex;
+    uint8_t deviceCount;
+};
+
+const uint8_t MAX_BLINK_COUNTER = 20;
+
 //debug mode
 #ifndef DEBUG
 #define DEBUG false
@@ -106,6 +114,7 @@ public:
 	//ranging functions
 	static MessageType detectMessageType(const byte datas[]); // TODO check return type
 	static void loop();
+	static void handlePeriodicTasks(uint32_t currentTime);
 	static void useRangeFilter(boolean enabled);
 	// Used for the smoothing algorithm (Exponential Moving Average). newValue must be >= 2. Default 15.
 	static void setRangeFilterValue(uint16_t newValue);
@@ -133,7 +142,7 @@ private:
 	static byte         _lastSentToShortAddress[2];
 	static DW1000Mac    _globalMac;
 	static uint32_t     timer;
-	static int16_t      counterForBlink;
+	static uint8_t      counterForBlink;
 	
 	static uint8_t      _master;
 	static uint32_t     lastSyncTime;
@@ -145,6 +154,12 @@ private:
 	static uint32_t SYNC_INTERVAL;
 
 	static uint32_t MICROS_TO_MILLIS;
+
+	static uint8_t messageCounter;
+	static bool lastTimeslotState;
+
+	static const uint8_t kRangeDeviceSize;
+	static const uint8_t kPollDeviceSize;
 	
 	//Handlers:
 	static void (* _handleNewRange)(void);
@@ -206,6 +221,7 @@ private:
 	static void transmitBlink();
 	static void transmitRangingInit(DW1000Device* myDistantDevice);
 	static void transmitPollAck(DW1000Device* myDistantDevice);
+	
 	static void transmitRangeReport(DW1000Device* myDistantDevice);
 	static void transmitRangeFailed(DW1000Device* myDistantDevice);
 	static void receiver();
@@ -215,11 +231,13 @@ private:
 	
 	//for ranging protocole (TAG)
 	static void transmitPoll(DW1000Device* myDistantDevice);
+	static void transmitPoll_2(bool timeslot);
+	static DeviceIndices calculateDeviceIndices(bool timeslot);
 	static void transmitRange(DW1000Device* myDistantDevice);
-	
+	static void transmitRange_2(bool timeslot);
+
 	//methods for range computation
 	static void computeRangeAsymmetric(DW1000Device* myDistantDevice, DW1000Time* myTOF);
-	static void timerTick();
 	
 	//Utils
 	static float filterValue(float value, float previousValue, uint16_t numberOfElements);

@@ -106,6 +106,39 @@ void DW1000Mac::generateShortMACFrame(byte frame[], byte sourceShortAddress[], b
 	incrementSeqNumber();
 }
 
+void DW1000Mac::generateMultiShortMACFrame(byte frame[], byte sourceShortAddress[], byte destShortAddress1[], byte destShortAddress2[]) {
+    // Frame Control (2 bytes) - Management Frame mit mehreren Destinationen
+    frame[0] = 0x02; // Management Frame
+    frame[1] = 0x00; // Beacons
+
+    // Sequence number (1 byte)
+    frame[2] = _seqNumber;
+
+    // PAN ID (2 bytes)
+    frame[3] = 0xCA;
+    frame[4] = 0xDE;
+
+    // Destination Address 1 (2 bytes)
+    byte destinationShortAddressReverse1[2];
+    reverseArray(destinationShortAddressReverse1, destShortAddress1, 2);
+    memcpy(frame + 5, destinationShortAddressReverse1, 2);
+
+    // Destination Address 2 (2 bytes)
+    byte destinationShortAddressReverse2[2];
+    reverseArray(destinationShortAddressReverse2, destShortAddress2, 2);
+    memcpy(frame + 7, destinationShortAddressReverse2, 2);
+
+    // Source Address (2 bytes)
+    byte sourceShortAddressReverse[2];
+    reverseArray(sourceShortAddressReverse, sourceShortAddress, 2);
+    memcpy(frame + 9, sourceShortAddressReverse, 2);
+
+    // Inkrementiere die Sequenznummer
+    incrementSeqNumber();
+}
+
+
+
 //the long frame for Ranging init
 //8 bytes for Destination Address and 2 bytes for Source Address
 //total=15
