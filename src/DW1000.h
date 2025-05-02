@@ -247,7 +247,9 @@ public:
 	static void setPulseFrequency(byte freq);
 	static byte getPulseFrequency();
 	static void setPreambleLength(byte prealen);
+
 	static void setChannel(byte channel);
+	
 	static void setPreambleCode(byte preacode);
 	static void useSmartPower(boolean smartPower);
 	
@@ -349,7 +351,7 @@ public:
 	static void enableMode(const byte mode[]);
 	
 	// use RX/TX specific and general default settings
-	static void setDefaults();
+	static void setDefaults(const byte channel);
 	
 	/* debug pretty print registers. */
 	static void getPrettyBytes(byte cmd, uint16_t offset, char msgBuffer[], uint16_t n);

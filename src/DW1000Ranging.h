@@ -49,27 +49,20 @@ enum MessageType {
 #define LEN_DATA 90
 
 //Max devices we put in the networkDevices array ! Each DW1000Device is 74 Bytes in SRAM memory for now.
-#define MAX_DEVICES 4
+#define MAX_DEVICES 8 //
 
 //Default Pin for module:
 #define DEFAULT_RST_PIN 9
 #define DEFAULT_SPI_SS_PIN 10
 
 //Default value
-//in ms
-#define DEFAULT_RESET_PERIOD 200 //200
 
-//in us
-#define DEFAULT_REPLY_DELAY_TIME 7000 //7000
+#define DEFAULT_RESET_PERIOD 200 //in ms
+#define DEFAULT_REPLY_DELAY_TIME 7000 //in us
 
 enum sketchType {
   TAG = 0,
   ANCHOR = 1
-};
-
-enum MasterStatus {
-  SLAVE = 0, 
-  MASTER = 1
 };
 
 struct DeviceIndices {
@@ -89,6 +82,8 @@ const uint8_t MAX_BLINK_COUNTER = 20;
 class DW1000RangingClass {
 public:
 	//variables
+	static byte channel;
+
 	// data buffer
 	static byte data[LEN_DATA];
 	
@@ -96,8 +91,8 @@ public:
 	static void    initCommunication(uint8_t myRST = DEFAULT_RST_PIN, uint8_t mySS = DEFAULT_SPI_SS_PIN, uint8_t myIRQ = 2, const uint32_t Default_Timer_Delay = 80);
 	static void    configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[], const byte channel=DW1000.CHANNEL_5);
 	static void    generalStart();
-	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const bool master = 0, const uint32_t SYNC_Periode =  102 * 8, const byte channel=DW1000.CHANNEL_5);
-	static void    startAsTag(char address[], const byte mode[], const bool randomShortAddress = true, const uint32_t TimeSlotStart = 0, const uint32_t TimeSlotEnd = 105, const byte channel=DW1000.CHANNEL_5);
+	static void    startAsAnchor(char address[], const byte mode[], const bool randomShortAddress = true, const byte channel=DW1000.CHANNEL_5);
+	static void    startAsTag(char address[], const byte mode[], const bool randomShortAddress = true, const byte channel=DW1000.CHANNEL_5);
 	static boolean addNetworkDevices(DW1000Device* device, boolean shortAddress);
 	static boolean addNetworkDevices(DW1000Device* device);
 	static void    removeNetworkDevices(int16_t index);
@@ -131,7 +126,6 @@ public:
 	//FOR DEBUGGING
 	static void visualizeDatas(byte datas[]);
 
-
 private:
 	//other devices in the network
 	static DW1000Device _networkDevices[MAX_DEVICES];
@@ -144,14 +138,8 @@ private:
 	static uint32_t     timer;
 	static uint8_t      counterForBlink;
 	
-	static uint8_t      _master;
 	static uint32_t     lastSyncTime;
 	static uint32_t     roundTripTime;
-
-	static uint32_t myTimeSlotStart; 
-	static uint32_t myTimeSlotEnd; 
-	static uint32_t synchronizedTime;
-	static uint32_t SYNC_INTERVAL;
 
 	static uint32_t MICROS_TO_MILLIS;
 
@@ -188,9 +176,7 @@ private:
 	//timer Tick delay
 	static uint32_t     _timerDelay;
 	static uint32_t     DEFAULT_TIMER_DELAY;
-	// ranging counter (per second)
-	static uint16_t     _successRangingCount;
-	static uint32_t    _rangingCountPeriod;
+
 	//ranging filter
 	static volatile boolean _useRangeFilter;
 	static uint16_t         _rangeFilterValue;
@@ -225,13 +211,9 @@ private:
 	static void transmitRangeReport(DW1000Device* myDistantDevice);
 	static void transmitRangeFailed(DW1000Device* myDistantDevice);
 	static void receiver();
-
-	static void transmitSync();
-	static bool isMyTimeSlot();
 	
 	//for ranging protocole (TAG)
 	static void transmitPoll(DW1000Device* myDistantDevice);
-	static void transmitPoll_2(bool timeslot);
 	static DeviceIndices calculateDeviceIndices(bool timeslot);
 	static void transmitRange(DW1000Device* myDistantDevice);
 	static void transmitRange_2(bool timeslot);
@@ -247,7 +229,6 @@ private:
 	static void handleSentAckTag(MessageType messageType);
 	static void updateDeviceTimeStamps(byte* shortAddress, DW1000Time time, MessageType messageType);
 	static void handleReceivedMessage();
-	static void handleSync();
 	static void handleBlink();
 	static void handleRangingInit();
 	static void processShortMacMessage(MessageType messageType);

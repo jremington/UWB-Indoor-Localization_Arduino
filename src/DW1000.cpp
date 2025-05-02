@@ -1270,7 +1270,7 @@ void DW1000Class::setPreambleCode(byte preacode) {
 	_preambleCode = preacode;
 }
 
-void DW1000Class::setDefaults() {
+void DW1000Class::setDefaults(const byte channel) {
 	if(_deviceMode == TX_MODE) {
 		
 	} else if(_deviceMode == RX_MODE) {
@@ -1303,7 +1303,7 @@ void DW1000Class::setDefaults() {
 		
 		// TODO add channel and code to mode tuples
 	    // TODO add channel and code settings with checks (see DW1000 user manual 10.5 table 61)/
-	    setChannel(CHANNEL_5);
+	    setChannel(channel);
 		if(getPulseFrequency() == TX_PULSE_FREQ_16MHZ) {
 			setPreambleCode(PREAMBLE_CODE_16MHZ_4);
 		} else {

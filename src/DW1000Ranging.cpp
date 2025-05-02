@@ -45,9 +45,6 @@ DW1000Mac    DW1000RangingClass::_globalMac;
 
 //module type (anchor or tag)
 int16_t      DW1000RangingClass::_type; // TODO enum??
-uint8_t      DW1000RangingClass::_master = 0;
-uint32_t     DW1000RangingClass::synchronizedTime=0;
-
 
 // message flow state
 volatile byte    DW1000RangingClass::_expectedMsgId;
@@ -66,15 +63,15 @@ boolean          DW1000RangingClass::_protocolFailed = false;
 // timestamps to remember
 uint32_t          DW1000RangingClass::timer           = 0;
 uint8_t 		  DW1000RangingClass::counterForBlink = 0;
-
 uint32_t          DW1000RangingClass::lastSyncTime    = 0;
 uint32_t          DW1000RangingClass::roundTripTime   = 0;
-uint32_t 		  DW1000RangingClass::myTimeSlotStart = 0; 
-uint32_t 		  DW1000RangingClass::myTimeSlotEnd   = 0;
-uint32_t 		  DW1000RangingClass::SYNC_INTERVAL   = 0;  //102
 
 // data buffer
-byte      DW1000RangingClass::data[LEN_DATA];
+byte    DW1000RangingClass::data[LEN_DATA];
+
+byte 	DW1000RangingClass::channel  = DW1000Class::CHANNEL_5;
+
+
 // reset line to the chip
 uint8_t   DW1000RangingClass::_RST;
 uint8_t   DW1000RangingClass::_SS;
@@ -87,9 +84,6 @@ uint16_t  DW1000RangingClass::_replyDelayTimeUS;
 uint32_t  DW1000RangingClass::_timerDelay;
 uint32_t  DW1000RangingClass::DEFAULT_TIMER_DELAY;
 
-// ranging counter (per second)
-uint16_t  DW1000RangingClass::_successRangingCount = 0;
-uint32_t  DW1000RangingClass::_rangingCountPeriod  = 0;
 //Here our handlers
 void (* DW1000RangingClass::_handleNewRange)(void) = 0;
 void (* DW1000RangingClass::_handleBlinkDevice)(DW1000Device*) = 0;
@@ -116,8 +110,8 @@ void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t 
 	_resetPeriod      = DEFAULT_RESET_PERIOD;
 	// reply times (same on both sides for symm. ranging)
 	_replyDelayTimeUS = DEFAULT_REPLY_DELAY_TIME;
+
 	//we set our timer delay
-	
 	DEFAULT_TIMER_DELAY = Default_Timer_Delay;
 	//default timer delay
 	// 80 defines Poll Delay - Duration 102ms
@@ -131,12 +125,12 @@ void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t 
 
 void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[], const byte channel) {
 	// general configuration
+	DW1000RangingClass::channel = channel;
 	DW1000.newConfiguration();
-	DW1000.setDefaults();
+	DW1000.setDefaults(DW1000RangingClass::channel);
 	DW1000.setDeviceAddress(deviceAddress);
 	DW1000.setNetworkId(networkId);
 	DW1000.enableMode(mode);
-	//DW1000.setChannel(channel);
 	DW1000.commitConfiguration();
 }
 
@@ -173,17 +167,12 @@ void DW1000RangingClass::generalStart() {
 		Serial.print(msg);
 	}
 	
-	
 	// anchor starts in receiving mode, awaiting a ranging poll message
 	receiver();
-	// for first time ranging frequency computation
-	_rangingCountPeriod = (esp_timer_get_time()/MICROS_TO_MILLIS);
 }
 
 //Anchor
-void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, 
-	const bool master, const uint32_t SYNC_Periode, const byte channel) {
-	
+void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const bool randomShortAddress, const byte channel) {
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
 	//write the address on the DW1000 chip
@@ -201,8 +190,6 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 		_currentShortAddress[0] = _currentAddress[0];
 		_currentShortAddress[1] = _currentAddress[1];
 	}
-
-	SYNC_INTERVAL = SYNC_Periode;
 	
 	//configure the network for mac filtering
 	//(device Address, network ID, frequency)
@@ -215,21 +202,13 @@ void DW1000RangingClass::startAsAnchor(char address[], const byte mode[], const 
 	//defined type as anchor
 	_type = ANCHOR;
 
-	//define anchor as master if master == 1
-	_master = master;
-	if(_master == MASTER){
-		Serial.print("\nI am the MASTER-ANCHOR");
-	}
-
 	Serial.print("\nANCHOR short address: ");
 	Serial.print(currShortAddr, HEX);
 	
 }
 
 //Tag
-void DW1000RangingClass::startAsTag(char address[], const byte mode[], const bool randomShortAddress, const uint32_t TimeSlotStart, 
-	const uint32_t TimeSlotEnd, const byte channel) {
-	
+void DW1000RangingClass::startAsTag(char address[], const byte mode[], const bool randomShortAddress, const byte channel) {
 	//save the address
 	DW1000.convertToByte(address, _currentAddress);
 	//write the address on the DW1000 chip
@@ -256,8 +235,7 @@ void DW1000RangingClass::startAsTag(char address[], const byte mode[], const boo
 	//defined type as tag
 	_type = TAG;
 	lastSyncTime = (esp_timer_get_time()/MICROS_TO_MILLIS);
-	myTimeSlotStart = TimeSlotStart; 
-	myTimeSlotEnd   = TimeSlotEnd;
+
 	Serial.print("\n### TAG ###");
 }
 
@@ -426,29 +404,10 @@ MessageType DW1000RangingClass::detectMessageType(const byte datas[]) {
     return ERROR;
 }
 
-// Tag
-bool DW1000RangingClass::isMyTimeSlot() {
-    uint32_t TIMER_MARGIN = DEFAULT_TIMER_DELAY + 22;
-    uint32_t currentTime = (esp_timer_get_time()/MICROS_TO_MILLIS) - synchronizedTime;
-    return (currentTime >= myTimeSlotStart) && (currentTime + TIMER_MARGIN < myTimeSlotEnd);
-}
-
 // Tag & Anchor
 void DW1000RangingClass::loop() {
     uint32_t currentTime = (esp_timer_get_time() / MICROS_TO_MILLIS);
     checkForReset();
-
-    // Periodically send a sync signal if configured as master
-    if (_master == MASTER) {
-        if (currentTime - lastSyncTime >= SYNC_INTERVAL) {
-            transmitSync();
-            if(DEBUG){
-                Serial.printf("\nSync sent: %u ms since last sync.", currentTime - lastSyncTime);
-            }
-            lastSyncTime = currentTime;
-        }
-    }
-
 	handlePeriodicTasks((esp_timer_get_time() / MICROS_TO_MILLIS)); 
     handleSentAck();         // Handle the sending of ACKs
     handleReceivedMessage(); // Handle received messages
@@ -469,12 +428,7 @@ void DW1000RangingClass::handlePeriodicTasks(uint32_t currentTime) {
             transmitBlink(); // Sending Blink signal
         } else if ( _networkDevicesNumber > 0){
 			_expectedMsgId = POLL_ACK;
-			//transmitPoll_2(isMyTimeSlot());
-
-			if(isMyTimeSlot()){
-				transmitPoll(nullptr);
-			}
-			
+			transmitPoll(nullptr);
 		}
     }
 
@@ -583,11 +537,6 @@ void DW1000RangingClass::handleReceivedMessage() {
 	MessageType messageType = detectMessageType(data);
 
 	switch (messageType) {
-		case SYNC:
-			if (_type == TAG) {
-				handleSync();
-			}
-			break;
 		case BLINK:
 			if (_type == ANCHOR) {
 				handleBlink();
@@ -602,15 +551,6 @@ void DW1000RangingClass::handleReceivedMessage() {
 			processShortMacMessage(messageType);
 			break;
 	}
-}
-
-// Tag 
-void DW1000RangingClass::handleSync() {
-	uint32_t currentTime = (esp_timer_get_time()/MICROS_TO_MILLIS);
-	if (DEBUG) {
-		Serial.print("\nhandleSync: " + String(currentTime - synchronizedTime));
-	}
-	synchronizedTime = currentTime;
 }
 
 // Anchor
@@ -908,7 +848,7 @@ void DW1000RangingClass::copyShortAddress(byte address1[], byte address2[]) {
 // Tag & Anchor
 void DW1000RangingClass::transmitInit() {
 	DW1000.newTransmit();
-	DW1000.setDefaults();
+	DW1000.setDefaults(DW1000RangingClass::channel);
 }
 
 // Tag & Anchor
@@ -942,13 +882,6 @@ void DW1000RangingClass::transmitBlink() {
 	transmitInit();
 	_globalMac.generateBlinkFrame(data, _currentAddress, _currentShortAddress);
 	transmit(data, 12); //transmit(data);
-}
-
-//Anchor
-void DW1000RangingClass::transmitSync() {
-	transmitInit();
-	_globalMac.generateSyncFrame(data, _currentAddress, _currentShortAddress);
-	transmit(data, 12);
 }
 
 //Anchor
@@ -1011,34 +944,6 @@ void DW1000RangingClass::transmitPoll(DW1000Device* myDistantDevice) {
 }
 
 //Tag
-void DW1000RangingClass::transmitPoll_2(bool timeslot) {
-	
-	DeviceIndices indices = calculateDeviceIndices(timeslot);
-	
-	if (indices.deviceCount == 0) {
-		return;
-	}
-
-	transmitInit();
-	_timerDelay = DEFAULT_TIMER_DELAY+(uint16_t)(indices.deviceCount*3*DEFAULT_REPLY_DELAY_TIME/MICROS_TO_MILLIS);
-	data[SHORT_MAC_LEN] = POLL;
-	data[SHORT_MAC_LEN + 1] = indices.deviceCount;
-
-	byte shortBroadcast[2] = {0xFF, 0xFF};
-	_globalMac.generateShortMACFrame(data, _currentShortAddress, shortBroadcast);
-
-	uint8_t device_index = 0;
-	for (uint8_t i = indices.startIndex; i <= indices.endIndex; i++) {
-		_networkDevices[i].setReplyTime((2 * device_index + 1) * DEFAULT_REPLY_DELAY_TIME);
-		memcpy(data+SHORT_MAC_LEN + 2 + kPollDeviceSize * device_index, _networkDevices[i].getByteShortAddress(), 2);
-		uint16_t replyTime = _networkDevices[i].getReplyTime();
-		memcpy(data+SHORT_MAC_LEN + 2 + 2 + kPollDeviceSize * device_index, &replyTime, 2);
-		device_index++;
-	}
-	copyShortAddress(_lastSentToShortAddress, shortBroadcast);
-	transmit(data, SHORT_MAC_LEN + 2 + kPollDeviceSize * indices.deviceCount); 
-}
-
 DeviceIndices DW1000RangingClass::calculateDeviceIndices(bool timeslot) {
     DeviceIndices result = {255, 255, 0};
 
@@ -1198,7 +1103,7 @@ void DW1000RangingClass::transmitRangeFailed(DW1000Device* myDistantDevice) {
 
 void DW1000RangingClass::receiver() {
 	DW1000.newReceive();
-	DW1000.setDefaults();
+	DW1000.setDefaults(DW1000RangingClass::channel);
 	// so we don't need to restart the receiver manually
 	DW1000.receivePermanently(true);
 	DW1000.startReceive();
