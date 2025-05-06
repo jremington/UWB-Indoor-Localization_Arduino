@@ -39,6 +39,8 @@ byte         DW1000RangingClass::_currentAddress[8];
 byte         DW1000RangingClass::_currentShortAddress[2];
 byte         DW1000RangingClass::_lastSentToShortAddress[2];
 
+byte DW1000RangingClass::_channel;
+
 volatile uint8_t DW1000RangingClass::_networkDevicesNumber = 0; // TODO short, 8bit?
 int16_t      DW1000RangingClass::_lastDistantDevice    = 0; // TODO short, 8bit?
 DW1000Mac    DW1000RangingClass::_globalMac;
@@ -68,9 +70,6 @@ uint32_t          DW1000RangingClass::roundTripTime   = 0;
 
 // data buffer
 byte    DW1000RangingClass::data[LEN_DATA];
-
-byte 	DW1000RangingClass::channel  = DW1000Class::CHANNEL_5;
-
 
 // reset line to the chip
 uint8_t   DW1000RangingClass::_RST;
@@ -125,11 +124,12 @@ void DW1000RangingClass::initCommunication(uint8_t myRST, uint8_t mySS, uint8_t 
 
 void DW1000RangingClass::configureNetwork(uint16_t deviceAddress, uint16_t networkId, const byte mode[], const byte channel) {
 	// general configuration
-	DW1000RangingClass::channel = channel;
+	_channel = channel;
 	DW1000.newConfiguration();
-	DW1000.setDefaults(DW1000RangingClass::channel);
+	DW1000.setDefaults(_channel);
 	DW1000.setDeviceAddress(deviceAddress);
 	DW1000.setNetworkId(networkId);
+	DW1000.setChannel(channel);
 	DW1000.enableMode(mode);
 	DW1000.commitConfiguration();
 }
@@ -848,7 +848,7 @@ void DW1000RangingClass::copyShortAddress(byte address1[], byte address2[]) {
 // Tag & Anchor
 void DW1000RangingClass::transmitInit() {
 	DW1000.newTransmit();
-	DW1000.setDefaults(DW1000RangingClass::channel);
+	DW1000.setDefaults(_channel);
 }
 
 // Tag & Anchor
@@ -1103,7 +1103,7 @@ void DW1000RangingClass::transmitRangeFailed(DW1000Device* myDistantDevice) {
 
 void DW1000RangingClass::receiver() {
 	DW1000.newReceive();
-	DW1000.setDefaults(DW1000RangingClass::channel);
+	DW1000.setDefaults(_channel);
 	// so we don't need to restart the receiver manually
 	DW1000.receivePermanently(true);
 	DW1000.startReceive();

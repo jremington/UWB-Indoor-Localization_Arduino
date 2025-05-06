@@ -185,6 +185,10 @@ void DW1000Class::begin(uint8_t irq, uint8_t rst) {
     // Attach interrupt for ESP32
     attachInterrupt(digitalPinToInterrupt(_irq), DW1000Class::handleInterrupt, RISING);
 	vTaskDelay(pdMS_TO_TICKS(5));
+	if (xHandleUwbInterrupt != NULL) {
+		vTaskDelete(xHandleUwbInterrupt);
+		xHandleUwbInterrupt = NULL;
+	}
 	xTaskCreate(&processInterrupt, "UWB-Interrupt", 4*1024, NULL, 2, &xHandleUwbInterrupt);
 
 }
@@ -1033,6 +1037,11 @@ void DW1000Class::interruptOnAutomaticAcknowledgeTrigger(boolean val) {
 void DW1000Class::setAntennaDelay(const uint16_t value) {
 	_antennaDelay.setTimestamp(value);
 	_antennaCalibrated = true;
+	byte antennaDelayBytes[DW1000Time::LENGTH_TIMESTAMP];
+	_antennaDelay.getTimestamp(antennaDelayBytes);
+
+	writeBytes(TX_ANTD, NO_SUB, antennaDelayBytes, LEN_TX_ANTD);
+	writeBytes(LDE_IF, LDE_RXANTD_SUB, antennaDelayBytes, LEN_LDE_RXANTD);
 }
 
 uint16_t DW1000Class::getAntennaDelay() {
@@ -1270,7 +1279,7 @@ void DW1000Class::setPreambleCode(byte preacode) {
 	_preambleCode = preacode;
 }
 
-void DW1000Class::setDefaults(const byte channel) {
+void DW1000Class::setDefaults(byte channel) {
 	if(_deviceMode == TX_MODE) {
 		
 	} else if(_deviceMode == RX_MODE) {

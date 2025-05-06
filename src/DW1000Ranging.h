@@ -82,7 +82,7 @@ const uint8_t MAX_BLINK_COUNTER = 20;
 class DW1000RangingClass {
 public:
 	//variables
-	static byte channel;
+	static byte _channel;
 
 	// data buffer
 	static byte data[LEN_DATA];
