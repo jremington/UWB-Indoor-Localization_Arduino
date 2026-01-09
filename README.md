@@ -1,6 +1,11 @@
 # UWB-Indoor-Localization
 
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
+UPDATE 1/9/2026
+
+Core Electronics is now selling AI-Thinker BU-03 kits using the DW3000 ranging module and an STM32 MCU, which supports more than five modules in the ranging setup, that is, more than 4 anchors are allowed. Arduino code is provided that uses the same least squares algorithm discussed here.
+
+See https://core-electronics.com.au/guides/diy-2d-and-3d-spatial-tracking-with-ultra-wideband-arduino-and-pico-guide/
 
 UPDATE 10/13/2024:  
 1. A new version of Thomas Trojer's DW1000 library was recently uploaded by Pizzolato Davide, reportedly with errors corrected for > 5 tags+anchors. Many changes were made to the library. Unfortunately I have not been able obtain ranging information from the original ESP32-UWB boards by MakerFabs. See issue #22. If anyone has successfully obtained ranges using this library, please contact me, or add comments to the issue thread.
