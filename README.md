@@ -3,7 +3,7 @@
 ## Indoor localization using ESP32_UWB (DW1000) tags and anchors
 UPDATE 1/9/2026
 
-Core Electronics is now selling AI-Thinker BU-03 kits using the DW3000 ranging module and an STM32 MCU, which supports more than five modules in the ranging setup, that is, more than 4 anchors are allowed. Arduino code is provided that uses the same least squares algorithm discussed here.
+Core Electronics is now selling AI-Thinker BU-03 kits using the DW3000 ranging module and an STM32 MCU, which supports more than five modules in the ranging setup. That is, more than 4 anchors are allowed, and possibly more than 1 tag. Arduino code is provided that uses the same least squares algorithm discussed here.
 
 See https://core-electronics.com.au/guides/diy-2d-and-3d-spatial-tracking-with-ultra-wideband-arduino-and-pico-guide/
 
